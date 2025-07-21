@@ -1,5 +1,22 @@
 name: OneChunkGuard
-version: '1.0-SNAPSHOT'
+version: '${project.version}'
 main: com.kamesuta.onechunkguard.OneChunkGuard
-api-version: '1.21'
+api-version: '1.20'
+depend: [WorldGuard, WorldEdit]
+description: シンプルな1チャンク保護プラグイン
 authors: [ Kamesuta ]
+
+commands:
+  unprotect:
+    description: チャンクの保護を解除し、保護ブロックを返却
+    aliases: [up]
+    usage: /<command>
+  trust:
+    description: 保護されたチャンクにプレイヤーを追加
+    usage: /<command> <プレイヤー名>
+  untrust:
+    description: 保護されたチャンクからプレイヤーを削除
+    usage: /<command> <プレイヤー名>
+  trustlist:
+    description: チャンク内のすべての信頼プレイヤーを一覧表示
+    usage: /<command>

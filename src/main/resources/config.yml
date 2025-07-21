@@ -1,0 +1,41 @@
+# 保護ブロックの設定
+protection-block:
+  material: END_STONE
+  display-name: "&6&l保護ブロック"
+  lore:
+    - "&7このブロックを設置すると"
+    - "&7チャンクが保護されます"
+    - "&c1人1チャンクまで！"
+
+# メッセージ設定
+messages:
+  protection-created: "&a保護が有効になりました！"
+  protection-removed: "&c保護が解除されました！"
+  already-protected: "&cすでに別のチャンクを保護しています！"
+  cannot-break: "&cこの保護ブロックは破壊できません！"
+  unprotect-success: "&a保護を解除し、ブロックを返却しました！"
+  no-protection: "&c保護しているチャンクがありません！"
+  region-overlap: "&cこのチャンクには既に保護された領域が存在します！"
+  cannot-move-item: "&c保護ブロックは移動できません！"
+  cannot-drop-item: "&c保護ブロックは捨てることができません！"
+  trust-success: "&a{player}を共同プレイヤーに追加しました！"
+  untrust-success: "&c{player}を共同プレイヤーから削除しました！"
+  trust-limit: "&c共同プレイヤー数が上限に達しています！"
+  not-owner: "&cあなたはこのチャンクの所有者ではありません！"
+  player-not-found: "&cプレイヤーが見つかりません！"
+
+# 保護設定
+protection:
+  # 保護する高さの範囲
+  min-y: -64
+  max-y: 320
+  # 共同プレイヤーの最大数
+  max-trusted-players: 5
+
+# チャットTUI設定
+chat-ui:
+  header: "&6━━━━━ チャンク保護設定 ━━━━━"
+  add-member: "&a[メンバー追加]"
+  remove-member: "&c[メンバー削除]"
+  list-members: "&b[メンバー一覧]"
+  footer: "&6━━━━━━━━━━━━━━━━━━━"
