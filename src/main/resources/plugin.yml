@@ -1,0 +1,5 @@
+name: OneChunkGuard
+version: '1.0-SNAPSHOT'
+main: com.kamesuta.onechunkguard.OneChunkGuard
+api-version: '1.21'
+authors: [ Kamesuta ]
