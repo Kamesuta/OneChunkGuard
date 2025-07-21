@@ -37,8 +37,9 @@ public class TrustCommand implements CommandExecutor {
         
         // 対象プレイヤーを検索
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
-        if (!target.hasPlayedBefore() && !target.isOnline()) {
-            player.sendMessage(plugin.getConfigManager().getMessage("player-not-found"));
+        // 自分自身をtrustしようとした場合
+        if (target.getUniqueId().equals(player.getUniqueId())) {
+            player.sendMessage("§c自分自身を信頼プレイヤーに追加することはできません！");
             return true;
         }
         

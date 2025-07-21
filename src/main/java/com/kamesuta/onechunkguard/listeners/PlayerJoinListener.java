@@ -29,7 +29,7 @@ public class PlayerJoinListener implements Listener {
             plugin.getDataManager().markPlayerReceivedBlock(player.getUniqueId());
             
             // ウェルカムメッセージを送信
-            player.sendMessage(plugin.getConfigManager().getMessage("protection-block.display-name"));
+            player.sendMessage(plugin.getConfigManager().getProtectionBlockDisplayName());
             player.sendMessage("§7ホットバー9番目に保護ブロックを配置しました！");
         }
     }

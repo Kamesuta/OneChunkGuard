@@ -23,6 +23,8 @@ messages:
   trust-limit: "&c共同プレイヤー数が上限に達しています！"
   not-owner: "&cあなたはこのチャンクの所有者ではありません！"
   player-not-found: "&cプレイヤーが見つかりません！"
+  cannot-break-others: "&c他の人の保護ブロックは破壊できません！"
+  owner-info: "&7この保護領域は {owner} のものです"
 
 # 保護設定
 protection:
@@ -31,6 +33,8 @@ protection:
   max-y: 320
   # 共同プレイヤーの最大数
   max-trusted-players: 5
+  # アクションバーにチャンク所有者を表示するか
+  show-owner-actionbar: true
 
 # チャットTUI設定
 chat-ui:

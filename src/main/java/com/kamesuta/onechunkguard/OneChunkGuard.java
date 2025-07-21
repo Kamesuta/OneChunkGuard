@@ -41,6 +41,9 @@ public class OneChunkGuard extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
         getServer().getPluginManager().registerEvents(new InventoryDragListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDropItemListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerSwapHandItemsListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
         
         // コマンドの登録
         getCommand("unprotect").setExecutor(new UnprotectCommand(this));

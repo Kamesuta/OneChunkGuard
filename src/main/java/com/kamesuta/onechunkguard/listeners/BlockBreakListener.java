@@ -34,7 +34,12 @@ public class BlockBreakListener implements Listener {
         if (protection != null && protection.getProtectionBlockLocation().equals(blockLocation)) {
             // これは保護ブロック
             if (!plugin.getProtectionManager().canBreakProtectionBlock(player, blockLocation)) {
-                player.sendMessage(plugin.getConfigManager().getMessage("cannot-break"));
+                // 他の人の保護ブロックか確認
+                if (!protection.getOwner().equals(player.getUniqueId())) {
+                    player.sendMessage(plugin.getConfigManager().getMessage("cannot-break-others"));
+                } else {
+                    player.sendMessage(plugin.getConfigManager().getMessage("cannot-break"));
+                }
                 event.setCancelled(true);
                 return;
             }

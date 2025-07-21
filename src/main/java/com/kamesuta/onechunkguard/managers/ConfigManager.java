@@ -89,4 +89,8 @@ public class ConfigManager {
         return ChatColor.translateAlternateColorCodes('&', 
             config.getString("chat-ui.footer", "&6━━━━━━━━━━━━━━━━━━━"));
     }
+    
+    public boolean isShowOwnerActionBar() {
+        return config.getBoolean("protection.show-owner-actionbar", true);
+    }
 }

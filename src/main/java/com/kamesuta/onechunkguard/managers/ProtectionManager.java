@@ -42,8 +42,11 @@ public class ProtectionManager {
         String chunkKey = blockLocation.getWorld().getName() + ":" + chunk.getX() + ":" + chunk.getZ();
         
         // チャンクが既に保護されているかチェック
-        if (dataManager.isChunkProtected(chunkKey)) {
+        ProtectionData existingProtection = dataManager.getChunkProtection(chunkKey);
+        if (existingProtection != null) {
+            String ownerName = Bukkit.getOfflinePlayer(existingProtection.getOwner()).getName();
             player.sendMessage(plugin.getConfigManager().getMessage("region-overlap"));
+            player.sendMessage(plugin.getConfigManager().getMessage("owner-info", "{owner}", ownerName));
             return false;
         }
         
@@ -181,9 +184,8 @@ public class ProtectionManager {
         owners.addPlayer(player.getUniqueId());
         region.setOwners(owners);
         
-        // フラグを設定
-        region.setFlag(Flags.BUILD, StateFlag.State.DENY);
-        region.setFlag(Flags.INTERACT, StateFlag.State.DENY);
+        // フラグを設定（所有者とメンバーは除外）
+        // FLAGSは設定しない - 所有者とメンバーが自由に使えるように
         
         regionManager.addRegion(region);
         
