@@ -34,16 +34,16 @@ public class ProtectionManager {
         UUID playerId = player.getUniqueId();
         DataManager dataManager = plugin.getDataManager();
 
-        // プレイヤーが既に保護を持っているかチェック
-        if (dataManager.hasProtection(playerId)) {
-            player.sendMessage(plugin.getConfigManager().getMessage("already-protected"));
-            return false;
-        }
-
         // 保護ブロックのタイプを取得
         String typeId = ItemUtils.getProtectionBlockTypeId(protectionItem);
         if (typeId == null) {
             typeId = "default";
+        }
+
+        // プレイヤーが既にこの種類の保護を持っているかチェック
+        if (dataManager.hasProtection(playerId, typeId)) {
+            player.sendMessage(plugin.getConfigManager().getMessage("already-protected"));
+            return false;
         }
         
         ProtectionBlockType blockType = plugin.getConfigManager().getProtectionBlockType(typeId);
@@ -114,12 +114,24 @@ public class ProtectionManager {
         }
 
         // WorldGuard領域を削除
-        removeWorldGuardRegion(playerId, protection.getWorldName());
+        removeWorldGuardRegion(playerId, protection.getWorldName(), protection.getProtectionBlockTypeId());
 
         // 保護ブロックとヘッドを削除
         Location blockLoc = protection.getProtectionBlockLocation();
+        boolean blockActuallyDestroyed = false;
         if (blockLoc.getWorld() != null) {
             Block block = blockLoc.getBlock();
+            
+            // ブロック破壊からの呼び出しで、実際にブロックが存在するかチェック
+            if (fromBlockBreak) {
+                ProtectionBlockType expectedType = plugin.getConfigManager().getProtectionBlockType(protection.getProtectionBlockTypeId());
+                if (expectedType != null && block.getType() == expectedType.getMaterial()) {
+                    blockActuallyDestroyed = true;
+                }
+            } else {
+                blockActuallyDestroyed = true; // コマンドからの呼び出しは常に成功とみなす
+            }
+            
             block.setType(Material.AIR);
 
             // 上のヘッドを削除
@@ -134,13 +146,25 @@ public class ProtectionManager {
 
         // プレイヤーに保護ブロックを返却
         if (returnBlock) {
-            // default以外のブロックは破壊時以外は返却しない
             String blockTypeId = protection.getProtectionBlockTypeId();
-            if ("default".equals(blockTypeId) || fromBlockBreak) {
+            
+            // 返却条件の判定
+            boolean shouldReturn = false;
+            if ("default".equals(blockTypeId)) {
+                shouldReturn = true; // defaultは常に返却
+            } else if (fromBlockBreak && blockActuallyDestroyed) {
+                shouldReturn = true; // default以外でも実際にブロックが破壊された場合は返却
+            }
+            
+            if (shouldReturn) {
                 InventoryUtils.giveProtectionBlock(player, blockTypeId);
             } else {
-                // default以外で/unprotectコマンドから呼ばれた場合は返却しない
-                player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success-no-return"));
+                // 返却しない場合のメッセージ
+                if (fromBlockBreak && !blockActuallyDestroyed) {
+                    player.sendMessage("§c保護ブロックが見つからないため、ブロックは返却されません。");
+                } else {
+                    player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success-no-return"));
+                }
                 return true;
             }
         }
@@ -265,7 +289,7 @@ public class ProtectionManager {
             return false;
         }
 
-        String regionId = "onechunk_" + player.getUniqueId();
+        String regionId = "onechunk_" + blockType.getId() + "_" + player.getUniqueId();
         
         // 範囲を計算
         int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
@@ -304,14 +328,14 @@ public class ProtectionManager {
         return true;
     }
 
-    private void removeWorldGuardRegion(UUID playerId, String worldName) {
+    private void removeWorldGuardRegion(UUID playerId, String worldName, String blockTypeId) {
         World world = Bukkit.getWorld(worldName);
         if (world == null) return;
 
         RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
         if (regionManager == null) return;
 
-        String regionId = "onechunk_" + playerId.toString();
+        String regionId = "onechunk_" + blockTypeId + "_" + playerId.toString();
         regionManager.removeRegion(regionId);
     }
 
@@ -341,7 +365,7 @@ public class ProtectionManager {
         if (world != null) {
             RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
             if (regionManager != null) {
-                ProtectedRegion region = regionManager.getRegion("onechunk_" + ownerId.toString());
+                ProtectedRegion region = regionManager.getRegion("onechunk_" + protection.getProtectionBlockTypeId() + "_" + ownerId.toString());
                 if (region != null) {
                     DefaultDomain members = region.getMembers();
                     members.addPlayer(trustedId);
@@ -364,7 +388,7 @@ public class ProtectionManager {
         if (world != null) {
             RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
             if (regionManager != null) {
-                ProtectedRegion region = regionManager.getRegion("onechunk_" + ownerId.toString());
+                ProtectedRegion region = regionManager.getRegion("onechunk_" + protection.getProtectionBlockTypeId() + "_" + ownerId.toString());
                 if (region != null) {
                     DefaultDomain members = region.getMembers();
                     members.removePlayer(trustedId);

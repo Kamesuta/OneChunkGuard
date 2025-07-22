@@ -40,6 +40,32 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
         }
 
         String targetPlayerName = args[0];
+        
+        // プレイヤーを取得（セレクター対応）
+        Player targetPlayer = null;
+        
+        try {
+            // セレクター（@p, @r, @a[name=...]等）の場合
+            if (targetPlayerName.startsWith("@")) {
+                var selectedEntities = org.bukkit.Bukkit.selectEntities(sender, targetPlayerName);
+                if (selectedEntities.isEmpty()) {
+                    sender.sendMessage("§cセレクターで対象が見つかりません。");
+                    return true;
+                }
+                var entity = selectedEntities.get(0);
+                if (!(entity instanceof Player)) {
+                    sender.sendMessage("§c対象がプレイヤーではありません。");
+                    return true;
+                }
+                targetPlayer = (Player) entity;
+            } else {
+                // 通常のプレイヤー名の場合
+                targetPlayer = Bukkit.getPlayer(targetPlayerName);
+            }
+        } catch (Exception e) {
+            sender.sendMessage("§c無効なセレクターまたはプレイヤー名です。");
+            return true;
+        }
         String blockTypeId = args[1];
         int amount = 1;
 
@@ -57,8 +83,7 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
             }
         }
 
-        // プレイヤーを取得
-        Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
+        // プレイヤーが見つからない場合
         if (targetPlayer == null) {
             sender.sendMessage("§cプレイヤー " + targetPlayerName + " が見つかりません。");
             return true;

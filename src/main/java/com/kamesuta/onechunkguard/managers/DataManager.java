@@ -15,8 +15,10 @@ import java.util.*;
 public class DataManager {
     private final OneChunkGuard plugin;
     private final File dataFile;
-    // プレイヤーUUID -> 保護データ
+    // プレイヤーUUID -> 保護データ（後方互換性のため残す）
     private final Map<UUID, ProtectionData> playerProtections = new HashMap<>();
+    // プレイヤーUUID+種類 -> 保護データ
+    private final Map<String, ProtectionData> playerTypeProtections = new HashMap<>();
     // チャンクキー -> 保護データ
     private final Map<String, ProtectionData> chunkProtections = new HashMap<>();
     // 初回保護ブロックを受け取ったプレイヤー
@@ -76,9 +78,18 @@ public class DataManager {
                             }
                         }
 
-                        ProtectionData data = new ProtectionData(owner, loc, trusted);
+                        // 保護ブロック種類を取得（デフォルトは "default"）
+                        String blockTypeId = protection.getString("block-type", "default");
+                        int chunkRange = protection.getInt("chunk-range", 1);
+                        
+                        ProtectionData data = new ProtectionData(owner, loc, blockTypeId, chunkRange, trusted);
                         playerProtections.put(owner, data);
-                        chunkProtections.put(data.getChunkKey(), data);
+                        playerTypeProtections.put(owner.toString() + ":" + blockTypeId, data);
+                        
+                        // 保護範囲内のすべてのチャンクキーを登録
+                        for (String chunkKey : data.getProtectedChunkKeys()) {
+                            chunkProtections.put(chunkKey, data);
+                        }
                     }
                 } catch (Exception e) {
                     plugin.getLogger().warning("保護データの読み込みに失敗: " + uuidStr + ": " + e.getMessage());
@@ -107,6 +118,10 @@ public class DataManager {
             protection.set("z", data.getProtectionBlockLocation().getZ());
             protection.set("chunkX", data.getChunkX());
             protection.set("chunkZ", data.getChunkZ());
+            
+            // 新しい情報も保存
+            protection.set("block-type", data.getProtectionBlockTypeId());
+            protection.set("chunk-range", data.getChunkRange());
 
             if (!data.getTrustedPlayers().isEmpty()) {
                 protection.set("trusted", data.getTrustedPlayers().stream()
@@ -144,21 +159,45 @@ public class DataManager {
     }
 
     public void addProtection(ProtectionData data) {
-        playerProtections.put(data.getOwner(), data);
-        chunkProtections.put(data.getChunkKey(), data);
+        UUID playerId = data.getOwner();
+        String blockTypeId = data.getProtectionBlockTypeId();
+        
+        playerProtections.put(playerId, data);
+        playerTypeProtections.put(playerId.toString() + ":" + blockTypeId, data);
+        
+        // 保護範囲内のすべてのチャンクキーを登録
+        for (String chunkKey : data.getProtectedChunkKeys()) {
+            chunkProtections.put(chunkKey, data);
+        }
+        
         saveData();
     }
 
     public void removeProtection(UUID playerId) {
         ProtectionData data = playerProtections.remove(playerId);
         if (data != null) {
-            chunkProtections.remove(data.getChunkKey());
+            String blockTypeId = data.getProtectionBlockTypeId();
+            playerTypeProtections.remove(playerId.toString() + ":" + blockTypeId);
+            
+            // 保護範囲内のすべてのチャンクキーを削除
+            for (String chunkKey : data.getProtectedChunkKeys()) {
+                chunkProtections.remove(chunkKey);
+            }
+            
             saveData();
         }
     }
 
     public boolean hasProtection(UUID playerId) {
         return playerProtections.containsKey(playerId);
+    }
+    
+    /**
+     * 指定した種類の保護を持っているかチェック
+     */
+    public boolean hasProtection(UUID playerId, String blockTypeId) {
+        String key = playerId.toString() + ":" + blockTypeId;
+        return playerTypeProtections.containsKey(key);
     }
 
     public boolean isChunkProtected(String chunkKey) {
