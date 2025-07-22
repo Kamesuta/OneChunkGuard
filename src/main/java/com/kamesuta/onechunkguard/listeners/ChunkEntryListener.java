@@ -15,11 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerMoveListener implements Listener {
+/**
+ * チャンクに入ったときにメッセージを出すリスナー
+ */
+public class ChunkEntryListener implements Listener {
     private final OneChunkGuard plugin;
     private final Map<UUID, String> lastChunkKey = new HashMap<>();
     
-    public PlayerMoveListener(OneChunkGuard plugin) {
+    public ChunkEntryListener(OneChunkGuard plugin) {
         this.plugin = plugin;
     }
     

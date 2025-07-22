@@ -33,17 +33,21 @@ public class OneChunkGuard extends JavaPlugin {
         this.dataManager = new DataManager(this);
         this.protectionManager = new ProtectionManager(this);
         
-        // イベントの登録
+        // イベントの登録（目的別にまとめたリスナー）
+        // 初回ログイン時配布リスナー
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
-        getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryDragListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDropItemListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerSwapHandItemsListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerMoveListener(this), this);
+        
+        // 保護ブロックをスロット9に固定するリスナー（死亡時の処理もこれ）
+        getServer().getPluginManager().registerEvents(new ProtectionBlockInventoryListener(this), this);
+        
+        // 設置/回収リスナー
+        getServer().getPluginManager().registerEvents(new ProtectionBlockPlaceBreakListener(this), this);
+        
+        // 保護ブロックのTUIを開くリスナー
+        getServer().getPluginManager().registerEvents(new ProtectionBlockInteractListener(this), this);
+        
+        // チャンクに入ったときにメッセージを出すリスナー
+        getServer().getPluginManager().registerEvents(new ChunkEntryListener(this), this);
         
         // コマンドの登録
         getCommand("unprotect").setExecutor(new UnprotectCommand(this));

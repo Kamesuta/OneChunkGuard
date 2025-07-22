@@ -18,12 +18,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class PlayerInteractListener implements Listener {
+/**
+ * 保護ブロックの右クリック時のTUI表示を管理するリスナー
+ */
+public class ProtectionBlockInteractListener implements Listener {
     private final OneChunkGuard plugin;
     private final Map<UUID, Long> lastInteraction = new HashMap<>();
     private static final long COOLDOWN_MS = 500; // 500ms のクールダウン
     
-    public PlayerInteractListener(OneChunkGuard plugin) {
+    public ProtectionBlockInteractListener(OneChunkGuard plugin) {
         this.plugin = plugin;
     }
     

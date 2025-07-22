@@ -6,6 +6,11 @@ depend: [WorldGuard, WorldEdit]
 description: シンプルな1チャンク保護プラグイン
 authors: [ Kamesuta ]
 
+permissions:
+  onechunkguard.admin:
+    description: 管理者権限（他人の保護ブロックや頭を破壊できる）
+    default: op
+
 commands:
   unprotect:
     description: チャンクの保護を解除し、保護ブロックを返却
