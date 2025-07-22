@@ -61,8 +61,8 @@ public class BlockBreakListener implements Listener {
             ProtectionData belowProtection = plugin.getDataManager().getChunkProtection(belowChunkKey);
             
             if (belowProtection != null && belowProtection.getProtectionBlockLocation().equals(belowLocation)) {
-                // この頭は保護の一部
-                if (!belowProtection.isTrusted(player.getUniqueId()) && !player.isOp()) {
+                // この頭は保護の一部なので、誰も壊せない（OPを除く）
+                if (!player.isOp()) {
                     player.sendMessage(plugin.getConfigManager().getMessage("cannot-break"));
                     event.setCancelled(true);
                 }

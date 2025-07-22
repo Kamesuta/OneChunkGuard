@@ -2,6 +2,7 @@ package com.kamesuta.onechunkguard.listeners;
 
 import com.kamesuta.onechunkguard.OneChunkGuard;
 import com.kamesuta.onechunkguard.utils.ItemUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,33 +27,28 @@ public class InventoryClickListener implements Listener {
         
         // 保護ブロックが移動されているかチェック
         if (ItemUtils.isProtectionBlock(clickedItem) || ItemUtils.isProtectionBlock(cursorItem)) {
-            // クリックされたアイテムが保護ブロックの場合
-            if (ItemUtils.isProtectionBlock(clickedItem)) {
-                // スロット8（ホットバー9番目）にあり、ホットバー内での移動の場合のみ許可
-                if (event.getSlot() == 8) {
-                    // スロット8からの取り出しはスロット8やホットバーに戻す場合のみ許可
-                    if (event.getClick().isShiftClick() || 
-                        (event.getSlot() >= 0 && event.getSlot() <= 8)) {
-                        // これは許可
-                    } else {
-                        event.setCancelled(true);
-                        player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
-                    }
-                } else {
-                    // 保護ブロックが間違ったスロットにある - 移動を防止
-                    event.setCancelled(true);
-                    player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
-                }
-            }
+            // すべての保護ブロックの移動を防止
+            event.setCancelled(true);
+            player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
             
-            // カーソルに保護ブロックがある場合
-            if (ItemUtils.isProtectionBlock(cursorItem)) {
-                // スロット8またはホットバーへの配置のみ許可
-                if (event.getSlot() != 8 && (event.getSlot() < 0 || event.getSlot() > 8)) {
-                    event.setCancelled(true);
-                    player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
+            // 次のティックで保護ブロックを正しい位置に戻す
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                // 全インベントリをスキャンして保護ブロックを削除
+                for (int i = 0; i < player.getInventory().getSize(); i++) {
+                    ItemStack item = player.getInventory().getItem(i);
+                    if (ItemUtils.isProtectionBlock(item)) {
+                        player.getInventory().setItem(i, null);
+                    }
                 }
-            }
+                
+                // カーソルにある保護ブロックも削除
+                if (ItemUtils.isProtectionBlock(player.getItemOnCursor())) {
+                    player.setItemOnCursor(null);
+                }
+                
+                // スロット8に保護ブロックを配置
+                player.getInventory().setItem(8, ItemUtils.createProtectionBlock());
+            });
         }
     }
 }

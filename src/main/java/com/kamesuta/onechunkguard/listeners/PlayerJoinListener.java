@@ -36,7 +36,7 @@ public class PlayerJoinListener implements Listener {
             
             // ウェルカムメッセージを送信
             player.sendMessage(plugin.getConfigManager().getProtectionBlockDisplayName());
-            player.sendMessage("§7ホットバー9番目に保護ブロックを配置しました！");
+            player.sendMessage(plugin.getConfigManager().getMessage("protection-given"));
         }
     }
 }

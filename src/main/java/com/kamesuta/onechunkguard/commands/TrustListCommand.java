@@ -22,7 +22,7 @@ public class TrustListCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("このコマンドはプレイヤーのみ使用できます。");
+            sender.sendMessage(plugin.getConfigManager().getMessage("command-only-player"));
             return true;
         }
         
@@ -36,19 +36,19 @@ public class TrustListCommand implements CommandExecutor {
         Set<UUID> trustedPlayers = protection.getTrustedPlayers();
         
         if (trustedPlayers.isEmpty()) {
-            player.sendMessage("§7信頼されたプレイヤーはいません。");
+            player.sendMessage(plugin.getConfigManager().getMessage("trust-list-empty"));
             return true;
         }
         
-        player.sendMessage("§6━━━━━ 信頼プレイヤー一覧 ━━━━━");
+        player.sendMessage(plugin.getConfigManager().getMessage("trust-list-header"));
         
         for (UUID trustedId : trustedPlayers) {
             OfflinePlayer trustedPlayer = Bukkit.getOfflinePlayer(trustedId);
             String status = trustedPlayer.isOnline() ? "§aオンライン" : "§7オフライン";
-            player.sendMessage("§f- " + trustedPlayer.getName() + " " + status);
+            player.sendMessage(plugin.getConfigManager().getMessage("trust-list-entry", "{player}", trustedPlayer.getName(), "{status}", status));
         }
         
-        player.sendMessage("§6━━━━━━━━━━━━━━━━━━━");
+        player.sendMessage(plugin.getConfigManager().getMessage("trust-list-footer"));
         
         return true;
     }

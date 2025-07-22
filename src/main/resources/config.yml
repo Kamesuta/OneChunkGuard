@@ -25,6 +25,18 @@ messages:
   player-not-found: "&cプレイヤーが見つかりません！"
   cannot-break-others: "&c他の人の保護ブロックは破壊できません！"
   owner-info: "&7この保護領域は {owner} のものです"
+  command-only-player: "&cこのコマンドはプレイヤーのみ使用できます。"
+  trust-usage: "&c使用方法: /trust <プレイヤー名>"
+  untrust-usage: "&c使用方法: /untrust <プレイヤー名>"
+  cannot-trust-self: "&c自分自身を信頼プレイヤーに追加することはできません！"
+  cannot-untrust-self: "&c自分自身を信頼プレイヤーから削除することはできません！"
+  already-trusted: "&c{player} は既に信頼されたプレイヤーです！"
+  not-trusted: "&c{player} は信頼されたプレイヤーではありません！"
+  trust-list-empty: "&7信頼されたプレイヤーはいません。"
+  trust-list-header: "&6━━━━━ 信頼プレイヤー一覧 ━━━━━"
+  trust-list-entry: "&f- {player} {status}"
+  trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
+  protection-given: "&7ホットバー9番目に保護ブロックを配置しました！"
 
 # 保護設定
 protection:

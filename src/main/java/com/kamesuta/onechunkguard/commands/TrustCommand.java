@@ -19,12 +19,12 @@ public class TrustCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("このコマンドはプレイヤーのみ使用できます。");
+            sender.sendMessage(plugin.getConfigManager().getMessage("command-only-player"));
             return true;
         }
         
         if (args.length != 1) {
-            player.sendMessage("§c使用方法: /trust <プレイヤー名>");
+            player.sendMessage(plugin.getConfigManager().getMessage("trust-usage"));
             return true;
         }
         
@@ -39,13 +39,13 @@ public class TrustCommand implements CommandExecutor {
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         // 自分自身をtrustしようとした場合
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            player.sendMessage("§c自分自身を信頼プレイヤーに追加することはできません！");
+            player.sendMessage(plugin.getConfigManager().getMessage("cannot-trust-self"));
             return true;
         }
         
         // 既に信頼されているかチェック
         if (protection.isTrusted(target.getUniqueId())) {
-            player.sendMessage("§c" + target.getName() + " は既に信頼されたプレイヤーです！");
+            player.sendMessage(plugin.getConfigManager().getMessage("already-trusted", "{player}", target.getName()));
             return true;
         }
         

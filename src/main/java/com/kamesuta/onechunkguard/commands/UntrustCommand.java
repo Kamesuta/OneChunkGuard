@@ -19,12 +19,12 @@ public class UntrustCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("このコマンドはプレイヤーのみ使用できます。");
+            sender.sendMessage(plugin.getConfigManager().getMessage("command-only-player"));
             return true;
         }
         
         if (args.length != 1) {
-            player.sendMessage("§c使用方法: /untrust <プレイヤー名>");
+            player.sendMessage(plugin.getConfigManager().getMessage("untrust-usage"));
             return true;
         }
         
@@ -39,13 +39,13 @@ public class UntrustCommand implements CommandExecutor {
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         // 自分自身をuntrustしようとした場合
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            player.sendMessage("§c自分自身を信頼プレイヤーから削除することはできません！");
+            player.sendMessage(plugin.getConfigManager().getMessage("cannot-untrust-self"));
             return true;
         }
         
         // プレイヤーが信頼されているかチェック
         if (!protection.getTrustedPlayers().contains(target.getUniqueId())) {
-            player.sendMessage("§c" + target.getName() + " は信頼されたプレイヤーではありません！");
+            player.sendMessage(plugin.getConfigManager().getMessage("not-trusted", "{player}", target.getName()));
             return true;
         }
         
