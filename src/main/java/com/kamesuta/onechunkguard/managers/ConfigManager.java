@@ -55,8 +55,10 @@ public class ConfigManager {
                 .collect(Collectors.toList());
             String parentRegion = typeSection.getString("parent-region", "");
             int chunkRange = typeSection.getInt("chunk-range", 1);
+            String areaName = ChatColor.translateAlternateColorCodes('&', 
+                typeSection.getString("area-name", displayName));
             
-            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange);
+            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange, areaName);
             protectionBlockTypes.put(typeId, type);
         }
         

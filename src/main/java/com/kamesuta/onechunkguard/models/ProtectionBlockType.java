@@ -14,15 +14,17 @@ public class ProtectionBlockType {
     private final List<String> lore;
     private final String parentRegion;
     private final int chunkRange;
+    private final String areaName;
 
     public ProtectionBlockType(String id, Material material, String displayName, 
-                              List<String> lore, String parentRegion, int chunkRange) {
+                              List<String> lore, String parentRegion, int chunkRange, String areaName) {
         this.id = id;
         this.material = material;
         this.displayName = displayName;
         this.lore = lore;
         this.parentRegion = parentRegion;
         this.chunkRange = chunkRange;
+        this.areaName = areaName;
     }
 
     public String getId() {
@@ -54,6 +56,10 @@ public class ProtectionBlockType {
      */
     public boolean hasParentRegionRestriction() {
         return parentRegion != null && !parentRegion.trim().isEmpty();
+    }
+
+    public String getAreaName() {
+        return areaName;
     }
 
     /**

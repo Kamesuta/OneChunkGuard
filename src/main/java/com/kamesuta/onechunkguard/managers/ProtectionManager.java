@@ -52,6 +52,15 @@ public class ProtectionManager {
             return false;
         }
 
+        // defaultブロックが他の種類専用エリアに設置されようとしているかチェック
+        if ("default".equals(typeId)) {
+            String conflictingAreaName = checkForRestrictedArea(blockLocation);
+            if (conflictingAreaName != null) {
+                player.sendMessage(plugin.getConfigManager().getMessage("restricted-area-message", "{area_name}", conflictingAreaName));
+                return false;
+            }
+        }
+
         // 親region制限をチェック
         if (blockType.hasParentRegionRestriction()) {
             if (!isInParentRegion(blockLocation, blockType.getParentRegion())) {
@@ -353,6 +362,22 @@ public class ProtectionManager {
         
         BlockVector3 point = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         return parentRegion.contains(point);
+    }
+    
+    /**
+     * 指定した位置が他の種類専用のエリアかチェック
+     */
+    private String checkForRestrictedArea(Location location) {
+        // 全ての保護ブロック種類をチェック
+        for (ProtectionBlockType type : plugin.getConfigManager().getProtectionBlockTypes().values()) {
+            // default以外で親リージョン制限がある種類をチェック
+            if (!"default".equals(type.getId()) && type.hasParentRegionRestriction()) {
+                if (isInParentRegion(location, type.getParentRegion())) {
+                    return type.getAreaName();
+                }
+            }
+        }
+        return null;
     }
     
     /**

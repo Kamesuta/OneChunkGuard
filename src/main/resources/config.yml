@@ -25,6 +25,7 @@ protection-blocks:
       - "&e/unprotect vip &7- VIP保護を解除してブロック回収"
     parent-region: "vip_area"
     chunk-range: 3     # 保護するチャンクの範囲（3=3x3チャンク）
+    area-name: "VIPエリア"  # エラーメッセージで表示される名前
 
 # メッセージ設定
 messages:
@@ -73,6 +74,7 @@ messages:
   give-success-admin: "&a{player} に {block} を {amount} 個配布しました。"
   give-success-player: "&a管理者から {block} を {amount} 個受け取りました。"
   remote-block-not-found: "&c保護ブロックが見つからないため、ブロックは返却されません。"
+  restricted-area-message: "&cこのエリアは{area_name}専用です！専用の保護ブロックが必要です。"
   
 # その他
   online-status: "&aオンライン"
