@@ -6,7 +6,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,19 +22,48 @@ public class ConfigManager {
     private final OneChunkGuard plugin;
     private final FileConfiguration config;
     private final Map<String, ProtectionBlockType> protectionBlockTypes = new HashMap<>();
+    private FileConfiguration messagesConfig;
+    private FileConfiguration langConfig;
+    private String language;
 
     public ConfigManager(OneChunkGuard plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
+        loadLanguage();
+        loadLanguageConfig();
+        loadMessagesConfig();
         loadProtectionBlockTypes();
     }
 
+    /**
+     * 言語別設定ファイルを読み込み
+     */
+    private void loadLanguageConfig() {
+        String fileName = "config_" + language + ".yml";
+        File configFile = new File(plugin.getDataFolder(), fileName);
+        
+        // ファイルが存在しない場合はリソースからコピー
+        if (!configFile.exists()) {
+            plugin.saveResource(fileName, false);
+        }
+        
+        langConfig = YamlConfiguration.loadConfiguration(configFile);
+        
+        // デフォルトをリソースから読み込み
+        InputStream defConfigStream = plugin.getResource(fileName);
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(defConfigStream, StandardCharsets.UTF_8));
+            langConfig.setDefaults(defConfig);
+        }
+    }
+    
     /**
      * 保護ブロックタイプを読み込み
      */
     private void loadProtectionBlockTypes() {
         protectionBlockTypes.clear();
-        ConfigurationSection section = config.getConfigurationSection("protection-blocks");
+        ConfigurationSection section = langConfig.getConfigurationSection("protection-blocks");
         
         if (section == null) {
             plugin.getLogger().warning("protection-blocks section not found in config.yml");
@@ -125,9 +160,59 @@ public class ConfigManager {
         return List.of("&7このブロックを設置すると", "&7チャンクが保護されます", "&c1人1チャンクまで！");
     }
 
+    /**
+     * 言語設定を読み込み
+     */
+    private void loadLanguage() {
+        this.language = config.getString("language", "en");
+        if (!language.equals("ja") && !language.equals("en")) {
+            plugin.getLogger().warning("Invalid language setting: " + language + ". Using 'en' as default.");
+            this.language = "en";
+        }
+    }
+    
+    /**
+     * メッセージ設定ファイルを読み込み
+     */
+    private void loadMessagesConfig() {
+        String fileName = "messages_" + language + ".yml";
+        File messagesFile = new File(plugin.getDataFolder(), fileName);
+        
+        // ファイルが存在しない場合はリソースからコピー
+        if (!messagesFile.exists()) {
+            plugin.saveResource(fileName, false);
+        }
+        
+        messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+        
+        // デフォルトをリソースから読み込み
+        InputStream defConfigStream = plugin.getResource(fileName);
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(defConfigStream, StandardCharsets.UTF_8));
+            messagesConfig.setDefaults(defConfig);
+        }
+    }
+    
+    /**
+     * 言語設定を取得
+     */
+    public String getLanguage() {
+        return language;
+    }
+    
     public String getMessage(String key) {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("messages." + key, "&cMessage not found: " + key));
+        // メッセージファイルから取得
+        if (messagesConfig != null) {
+            String message = messagesConfig.getString(key);
+            if (message != null) {
+                return ChatColor.translateAlternateColorCodes('&', message);
+            }
+        }
+        
+        // メッセージが見つからない場合
+        plugin.getLogger().warning("Message not found: " + key);
+        return ChatColor.translateAlternateColorCodes('&', "&cMessage not found: " + key);
     }
 
     public String getMessage(String key, String... replacements) {
@@ -141,43 +226,38 @@ public class ConfigManager {
     }
 
     public int getMinY() {
-        return config.getInt("protection.min-y", -64);
+        return langConfig.getInt("protection.min-y", -64);
     }
 
     public int getMaxY() {
-        return config.getInt("protection.max-y", 320);
+        return langConfig.getInt("protection.max-y", 320);
     }
 
     public int getMaxTrustedPlayers() {
-        return config.getInt("protection.max-trusted-players", 5);
+        return langConfig.getInt("protection.max-trusted-players", 5);
     }
 
     public String getChatUIHeader() {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("chat-ui.header", "&6━━━━━ チャンク保護設定 ━━━━━"));
+        return getMessage("chat-ui.header");
     }
 
     public String getChatUIAddMember() {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("chat-ui.add-member", "&a[メンバー追加]"));
+        return getMessage("chat-ui.add-member");
     }
 
     public String getChatUIRemoveMember() {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("chat-ui.remove-member", "&c[メンバー削除]"));
+        return getMessage("chat-ui.remove-member");
     }
 
     public String getChatUIListMembers() {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("chat-ui.list-members", "&b[メンバー一覧]"));
+        return getMessage("chat-ui.list-members");
     }
 
     public String getChatUIFooter() {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("chat-ui.footer", "&6━━━━━━━━━━━━━━━━━━━"));
+        return getMessage("chat-ui.footer");
     }
 
     public boolean isShowOwnerActionBar() {
-        return config.getBoolean("protection.show-owner-actionbar", true);
+        return langConfig.getBoolean("protection.show-owner-actionbar", true);
     }
 }

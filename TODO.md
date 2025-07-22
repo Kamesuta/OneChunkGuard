@@ -42,6 +42,9 @@
 - [x] default以外に通常の保護ブロックを置いたときに、その種類の保護ブロック専用という旨の専用メッセージを出す
     - [x] 保護種類名はコンフィグで設定できるようにする
 - [x] README.mdを更新、Modrinthにアップロードしたときに特徴をアピールできるようにする
-- [ ] i18n対応
-    - [ ] messages_ja.ymlとmessages_en.ymlを作成
-    - [ ] README_en.mdを作成
+- [x] i18n対応
+    - [x] messages_ja.ymlとmessages_en.ymlを作成
+    - [x] README_en.mdを作成
+    - [x] READMEは相互に言語リンクを貼る
+    - [x] config.ymlから言語キーを設定できるようにし、言語ymlを読み込むようにする
+    - [x] config.ymlもconfig_en.ymlとconfig_ja.ymlに分ける。config.ymlは言語だけ設定

@@ -1,0 +1,70 @@
+# 日本語メッセージファイル
+# OneChunkGuard
+
+# 保護関連
+protection-created: "&a保護が有効になりました！"
+protection-removed: "&c保護が解除されました！"
+already-protected: "&cすでに別のチャンクを保護しています！"
+cannot-break: "&cこの保護ブロックは破壊できません！"
+unprotect-success: "&a保護を解除し、ブロックを返却しました！"
+no-protection: "&c保護しているチャンクがありません！"
+region-overlap: "&cこのチャンクには既に保護された領域が存在します！"
+cannot-move-item: "&c保護ブロックは移動できません！"
+cannot-drop-item: "&c保護ブロックは捨てることができません！"
+
+# 信頼システム関連
+trust-success: "&a{player}を共同プレイヤーに追加しました！"
+untrust-success: "&c{player}を共同プレイヤーから削除しました！"
+trust-limit: "&c共同プレイヤー数が上限に達しています！"
+not-owner: "&cあなたはこのチャンクの所有者ではありません！"
+player-not-found: "&cプレイヤーが見つかりません！"
+cannot-break-others: "&c他の人の保護ブロックは破壊できません！"
+owner-info: "&7この保護領域は {owner} のものです"
+
+# コマンド関連
+command-only-player: "&cこのコマンドはプレイヤーのみ使用できます。"
+trust-usage: "&c使用方法: /trust <プレイヤー名>"
+untrust-usage: "&c使用方法: /untrust <プレイヤー名>"
+cannot-trust-self: "&c自分自身を信頼プレイヤーに追加することはできません！"
+cannot-untrust-self: "&c自分自身を信頼プレイヤーから削除することはできません！"
+already-trusted: "&c{player} は既に信頼されたプレイヤーです！"
+not-trusted: "&c{player} は信頼されたプレイヤーではありません！"
+
+# 信頼リスト表示
+trust-list-empty: "&7信頼されたプレイヤーはいません。"
+trust-list-header: "&6━━━━━ 信頼プレイヤー一覧 ━━━━━"
+trust-list-entry: "&f- {player} {status}"
+trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
+
+# 配布・設置関連
+protection-given: "&7保護ブロックを受け取りました！保護ブロックを設置することで1x1チャンクを保護できます！"
+outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
+no-permission: "&c権限がありません！"
+unprotect-success-no-return: "&a保護を解除しました！（ブロックは返却されません）"
+
+# 管理者コマンド関連
+give-usage: "&c使用方法: /giveprotectionblock <プレイヤー名> <保護ブロック種類> [数量]"
+selector-no-target: "&cセレクターで対象が見つかりません。"
+selector-not-player: "&c対象がプレイヤーではありません。"
+invalid-selector-or-player: "&c無効なセレクターまたはプレイヤー名です。"
+invalid-amount-range: "&c数量は1から64の間で指定してください。"
+invalid-amount-format: "&c数量は数字で指定してください。"
+target-player-not-found: "&cプレイヤー {player} が見つかりません。"
+protection-type-not-found: "&c保護ブロック種類 '{type}' が見つかりません。"
+available-types: "&7利用可能な種類: {types}"
+give-success-admin: "&a{player} に {block} を {amount} 個配布しました。"
+give-success-player: "&a管理者から {block} を {amount} 個受け取りました。"
+remote-block-not-found: "&c保護ブロックが見つからないため、ブロックは返却されません。"
+restricted-area-message: "&cこのエリアは{area_name}専用です！専用の保護ブロックが必要です。"
+
+# ステータス
+online-status: "&aオンライン"
+offline-status: "&7オフライン"
+
+# チャットUI
+chat-ui:
+  header: "&6━━━━━ チャンク保護設定 ━━━━━"
+  add-member: "&a[メンバー追加]"
+  remove-member: "&c[メンバー削除]"
+  list-members: "&b[メンバー一覧]"
+  footer: "&6━━━━━━━━━━━━━━━━━━━"

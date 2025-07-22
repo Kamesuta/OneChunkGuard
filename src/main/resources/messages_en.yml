@@ -1,0 +1,70 @@
+# English Message File
+# OneChunkGuard
+
+# Protection Related
+protection-created: "&aProtection has been activated!"
+protection-removed: "&cProtection has been removed!"
+already-protected: "&cYou are already protecting another chunk!"
+cannot-break: "&cYou cannot break this protection block!"
+unprotect-success: "&aProtection removed and block returned!"
+no-protection: "&cYou are not protecting any chunks!"
+region-overlap: "&cThis chunk already contains a protected region!"
+cannot-move-item: "&cProtection blocks cannot be moved!"
+cannot-drop-item: "&cProtection blocks cannot be dropped!"
+
+# Trust System Related
+trust-success: "&a{player} has been added as a trusted player!"
+untrust-success: "&c{player} has been removed from trusted players!"
+trust-limit: "&cTrusted player limit has been reached!"
+not-owner: "&cYou are not the owner of this chunk!"
+player-not-found: "&cPlayer not found!"
+cannot-break-others: "&cYou cannot break other players' protection blocks!"
+owner-info: "&7This protected area belongs to {owner}"
+
+# Command Related
+command-only-player: "&cThis command can only be used by players."
+trust-usage: "&cUsage: /trust <player name>"
+untrust-usage: "&cUsage: /untrust <player name>"
+cannot-trust-self: "&cYou cannot add yourself as a trusted player!"
+cannot-untrust-self: "&cYou cannot remove yourself from trusted players!"
+already-trusted: "&c{player} is already a trusted player!"
+not-trusted: "&c{player} is not a trusted player!"
+
+# Trust List Display
+trust-list-empty: "&7No trusted players."
+trust-list-header: "&6━━━━━ Trusted Players ━━━━━"
+trust-list-entry: "&f- {player} {status}"
+trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
+
+# Distribution & Placement Related
+protection-given: "&7You received a protection block! Place it to protect a 1x1 chunk!"
+outside-parent-region: "&cThis protection block can only be placed within {region}!"
+no-permission: "&cYou don't have permission!"
+unprotect-success-no-return: "&aProtection removed! (Block not returned)"
+
+# Admin Command Related
+give-usage: "&cUsage: /giveprotectionblock <player> <type> [amount]"
+selector-no-target: "&cNo target found for selector."
+selector-not-player: "&cTarget is not a player."
+invalid-selector-or-player: "&cInvalid selector or player name."
+invalid-amount-range: "&cAmount must be between 1 and 64."
+invalid-amount-format: "&cAmount must be a number."
+target-player-not-found: "&cPlayer {player} not found."
+protection-type-not-found: "&cProtection block type '{type}' not found."
+available-types: "&7Available types: {types}"
+give-success-admin: "&aGave {amount} {block}(s) to {player}."
+give-success-player: "&aReceived {amount} {block}(s) from an administrator."
+remote-block-not-found: "&cProtection block not found, block will not be returned."
+restricted-area-message: "&cThis area is exclusive to {area_name}! You need a specialized protection block."
+
+# Status
+online-status: "&aOnline"
+offline-status: "&7Offline"
+
+# Chat UI
+chat-ui:
+  header: "&6━━━━━ Chunk Protection ━━━━━"
+  add-member: "&a[Add Member]"
+  remove-member: "&c[Remove Member]"
+  list-members: "&b[Member List]"
+  footer: "&6━━━━━━━━━━━━━━━━━━━"

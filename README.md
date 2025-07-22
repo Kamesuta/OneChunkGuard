@@ -1,5 +1,7 @@
 # OneChunkGuard
 
+[English](README_en.md) | 日本語
+
 > 🏆 **直感的で平等な1チャンク保護プラグイン** for Minecraft
 
 OneChunkGuardは、**初心者からマイクラプロまで**誰でも簡単に使えるシンプルな土地保護プラグインです。  

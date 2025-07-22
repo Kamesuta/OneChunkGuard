@@ -1,0 +1,43 @@
+# English Configuration File
+# OneChunkGuard
+
+# Protection Block Types (Multiple types can be defined)
+protection-blocks:
+  # Default protection block
+  default:
+    material: END_STONE
+    display-name: "&6&lProtection Block"
+    lore:
+      - "&7Place this block to"
+      - "&7protect a chunk"
+      - "&cOne chunk per person!"
+      - ""
+      - "&eRight-click placed block to set co-players"
+      - "&e/unprotect &7- Remove protection & retrieve block"
+    parent-region: ""  # No restriction if empty
+    chunk-range: 1     # Protected chunk range (1=1x1 chunks)
+  
+  # VIP player protection block (example)
+  vip:
+    material: DIAMOND_BLOCK
+    display-name: "&b&lVIP Protection Block"
+    lore:
+      - "&7Place this block to"
+      - "&7protect 9 chunks"
+      - "&cOne per type per person!"
+      - ""
+      - "&eRight-click placed block to set co-players"
+      - "&e/unprotect vip &7- Remove VIP protection & retrieve block"
+    parent-region: "vip_area"
+    chunk-range: 3     # Protected chunk range (3=3x3 chunks)
+    area-name: "VIP Area"  # Name displayed in error messages
+
+# Protection Settings
+protection:
+  # Protected height range
+  min-y: -64
+  max-y: 320
+  # Maximum trusted players
+  max-trusted-players: 5
+  # Show chunk owner in action bar
+  show-owner-actionbar: true
