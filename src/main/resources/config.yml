@@ -59,6 +59,24 @@ messages:
   outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
   no-permission: "&c権限がありません！"
   unprotect-success-no-return: "&a保護を解除しました！（ブロックは返却されません）"
+  
+# 管理者コマンド関連
+  give-usage: "&c使用方法: /giveprotectionblock <プレイヤー名> <保護ブロック種類> [数量]"
+  selector-no-target: "&cセレクターで対象が見つかりません。"
+  selector-not-player: "&c対象がプレイヤーではありません。"
+  invalid-selector-or-player: "&c無効なセレクターまたはプレイヤー名です。"
+  invalid-amount-range: "&c数量は1から64の間で指定してください。"
+  invalid-amount-format: "&c数量は数字で指定してください。"
+  target-player-not-found: "&cプレイヤー {player} が見つかりません。"
+  protection-type-not-found: "&c保護ブロック種類 '{type}' が見つかりません。"
+  available-types: "&7利用可能な種類: {types}"
+  give-success-admin: "&a{player} に {block} を {amount} 個配布しました。"
+  give-success-player: "&a管理者から {block} を {amount} 個受け取りました。"
+  remote-block-not-found: "&c保護ブロックが見つからないため、ブロックは返却されません。"
+  
+# その他
+  online-status: "&aオンライン"
+  offline-status: "&7オフライン"
 
 # 保護設定
 protection:

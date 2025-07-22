@@ -41,13 +41,18 @@ public class UnprotectCommand implements CommandExecutor, TabCompleter {
     }
     
     /**
-     * デフォルトの/unprotect動作
+     * デフォルトの/unprotect動作（defaultブロックのみ対象）
      */
     private boolean handleUnprotectDefault(Player player) {
-        // 保護を解除してブロックを返却、もしくは保護がなくても保護ブロックを取得
-        if (!plugin.getProtectionManager().removeProtection(player, true)) {
-            // 保護がない場合でもデフォルト保護ブロックを配布
-            giveProtectionBlock(player, null);
+        // defaultタイプの保護があるかチェック
+        ProtectionData defaultProtection = plugin.getDataManager().getPlayerProtection(player.getUniqueId(), "default");
+        
+        if (defaultProtection != null) {
+            // defaultブロックの保護を解除してブロックを返却
+            plugin.getProtectionManager().removeProtection(player, "default", true);
+        } else {
+            // defaultの保護がない場合でもデフォルト保護ブロックを配布
+            giveProtectionBlock(player, "default");
         }
         return true;
     }
@@ -59,24 +64,26 @@ public class UnprotectCommand implements CommandExecutor, TabCompleter {
         // 指定された種類が存在するかチェック
         ProtectionBlockType blockType = plugin.getConfigManager().getProtectionBlockType(blockTypeId);
         if (blockType == null) {
-            player.sendMessage("§c保護ブロック種類 '" + blockTypeId + "' が見つかりません。");
-            player.sendMessage("§7利用可能な種類: " + String.join(", ", plugin.getConfigManager().getProtectionBlockTypes().keySet()));
+            player.sendMessage(plugin.getConfigManager().getMessage("protection-type-not-found", "{type}", blockTypeId));
+            player.sendMessage(plugin.getConfigManager().getMessage("available-types", "{types}", String.join(", ", plugin.getConfigManager().getProtectionBlockTypes().keySet())));
             return true;
         }
         
-        // 現在の保護を確認
-        ProtectionData currentProtection = plugin.getDataManager().getPlayerProtection(player.getUniqueId());
+        // 指定種類の保護を確認
+        ProtectionData targetProtection = plugin.getDataManager().getPlayerProtection(player.getUniqueId(), blockTypeId);
         
-        if (currentProtection != null && blockTypeId.equals(currentProtection.getProtectionBlockTypeId())) {
+        if (targetProtection != null) {
             // 指定された種類の保護がある場合は解除
-            plugin.getProtectionManager().removeProtection(player, true);
-        } else if (currentProtection != null) {
-            // 異なる種類の保護がある場合はエラー
-            player.sendMessage("§c現在の保護は '" + currentProtection.getProtectionBlockTypeId() + "' 種類です。");
-            return true;
+            plugin.getProtectionManager().removeProtection(player, blockTypeId, true);
         } else {
-            // 保護がない場合は指定種類のブロックを配布
-            giveProtectionBlock(player, blockTypeId);
+            // 保護がない場合の処理
+            if ("default".equals(blockTypeId)) {
+                // defaultの場合は保護ブロックを配布
+                giveProtectionBlock(player, blockTypeId);
+            } else {
+                // default以外の場合は返却なし
+                player.sendMessage(plugin.getConfigManager().getMessage("no-protection"));
+            }
         }
         
         return true;

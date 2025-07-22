@@ -35,7 +35,7 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
 
         // 使用方法チェック
         if (args.length < 2) {
-            sender.sendMessage("§c使用方法: /giveprotectionblock <プレイヤー名> <保護ブロック種類> [数量]");
+            sender.sendMessage(plugin.getConfigManager().getMessage("give-usage"));
             return true;
         }
 
@@ -49,12 +49,12 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
             if (targetPlayerName.startsWith("@")) {
                 var selectedEntities = org.bukkit.Bukkit.selectEntities(sender, targetPlayerName);
                 if (selectedEntities.isEmpty()) {
-                    sender.sendMessage("§cセレクターで対象が見つかりません。");
+                    sender.sendMessage(plugin.getConfigManager().getMessage("selector-no-target"));
                     return true;
                 }
                 var entity = selectedEntities.get(0);
                 if (!(entity instanceof Player)) {
-                    sender.sendMessage("§c対象がプレイヤーではありません。");
+                    sender.sendMessage(plugin.getConfigManager().getMessage("selector-not-player"));
                     return true;
                 }
                 targetPlayer = (Player) entity;
@@ -63,7 +63,7 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
                 targetPlayer = Bukkit.getPlayer(targetPlayerName);
             }
         } catch (Exception e) {
-            sender.sendMessage("§c無効なセレクターまたはプレイヤー名です。");
+            sender.sendMessage(plugin.getConfigManager().getMessage("invalid-selector-or-player"));
             return true;
         }
         String blockTypeId = args[1];
@@ -74,26 +74,26 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
             try {
                 amount = Integer.parseInt(args[2]);
                 if (amount <= 0 || amount > 64) {
-                    sender.sendMessage("§c数量は1から64の間で指定してください。");
+                    sender.sendMessage(plugin.getConfigManager().getMessage("invalid-amount-range"));
                     return true;
                 }
             } catch (NumberFormatException e) {
-                sender.sendMessage("§c数量は数字で指定してください。");
+                sender.sendMessage(plugin.getConfigManager().getMessage("invalid-amount-format"));
                 return true;
             }
         }
 
         // プレイヤーが見つからない場合
         if (targetPlayer == null) {
-            sender.sendMessage("§cプレイヤー " + targetPlayerName + " が見つかりません。");
+            sender.sendMessage(plugin.getConfigManager().getMessage("target-player-not-found", "{player}", targetPlayerName));
             return true;
         }
 
         // 保護ブロックタイプを取得
         ProtectionBlockType blockType = plugin.getConfigManager().getProtectionBlockType(blockTypeId);
         if (blockType == null) {
-            sender.sendMessage("§c保護ブロック種類 '" + blockTypeId + "' が見つかりません。");
-            sender.sendMessage("§7利用可能な種類: " + String.join(", ", plugin.getConfigManager().getProtectionBlockTypes().keySet()));
+            sender.sendMessage(plugin.getConfigManager().getMessage("protection-type-not-found", "{type}", blockTypeId));
+            sender.sendMessage(plugin.getConfigManager().getMessage("available-types", "{types}", String.join(", ", plugin.getConfigManager().getProtectionBlockTypes().keySet())));
             return true;
         }
 
@@ -111,8 +111,8 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
 
         // 成功メッセージ
         String blockName = blockType.getDisplayName();
-        sender.sendMessage("§a" + targetPlayerName + " に " + blockName + " を " + amount + " 個配布しました。");
-        targetPlayer.sendMessage("§a管理者から " + blockName + " を " + amount + " 個受け取りました。");
+        sender.sendMessage(plugin.getConfigManager().getMessage("give-success-admin", "{player}", targetPlayerName, "{block}", blockName, "{amount}", String.valueOf(amount)));
+        targetPlayer.sendMessage(plugin.getConfigManager().getMessage("give-success-player", "{block}", blockName, "{amount}", String.valueOf(amount)));
 
         return true;
     }

@@ -35,15 +35,14 @@ public class ProtectionBlockInventoryListener implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
         ItemStack cursorItem = event.getCursor();
 
-        // 保護ブロックが移動されているかチェック
-        if (ItemUtils.isProtectionBlock(clickedItem) || ItemUtils.isProtectionBlock(cursorItem)) {
-            // すべての保護ブロックの移動を防止
+        // defaultタイプの保護ブロックのみ移動を防止
+        if (isDefaultProtectionBlock(clickedItem) || isDefaultProtectionBlock(cursorItem)) {
             event.setCancelled(true);
             player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
 
             // 次のティックで保護ブロックを正しい位置に戻す
             Bukkit.getScheduler().runTask(plugin, () -> {
-                InventoryUtils.giveProtectionBlock(player);
+                InventoryUtils.giveProtectionBlock(player, "default");
             });
         }
     }
@@ -54,8 +53,8 @@ public class ProtectionBlockInventoryListener implements Listener {
             return;
         }
 
-        // ドラッグされたアイテムが保護ブロックかチェック
-        if (ItemUtils.isProtectionBlock(event.getOldCursor()) || ItemUtils.isProtectionBlock(event.getCursor())) {
+        // defaultタイプの保護ブロックのみドラッグを防止
+        if (isDefaultProtectionBlock(event.getOldCursor()) || isDefaultProtectionBlock(event.getCursor())) {
             event.setCancelled(true);
             player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
         }
@@ -65,8 +64,8 @@ public class ProtectionBlockInventoryListener implements Listener {
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         ItemStack droppedItem = event.getItemDrop().getItemStack();
 
-        // 保護ブロックがドロップされたかチェック
-        if (ItemUtils.isProtectionBlock(droppedItem)) {
+        // defaultタイプの保護ブロックのみドロップを防止
+        if (isDefaultProtectionBlock(droppedItem)) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(plugin.getConfigManager().getMessage("cannot-drop-item"));
         }
@@ -74,14 +73,14 @@ public class ProtectionBlockInventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        // 死亡時のドロップから保護ブロックを削除
-        event.getDrops().removeIf(ItemUtils::isProtectionBlock);
+        // 死亡時のドロップからdefaultタイプの保護ブロックのみ削除
+        event.getDrops().removeIf(this::isDefaultProtectionBlock);
 
-        // 死亡後のリスポーン時に保護ブロックを再配置
+        // 死亡後のリスポーン時にdefaultタイプの保護ブロックを再配置
         Player player = event.getEntity();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline()) {
-                InventoryUtils.giveProtectionBlock(player);
+                InventoryUtils.giveProtectionBlock(player, "default");
             }
         }, 5L); // 5ティック後に実行
     }
@@ -91,10 +90,22 @@ public class ProtectionBlockInventoryListener implements Listener {
         ItemStack mainHand = event.getMainHandItem();
         ItemStack offHand = event.getOffHandItem();
 
-        // どちらかの手に保護ブロックがあるかチェック
-        if (ItemUtils.isProtectionBlock(mainHand) || ItemUtils.isProtectionBlock(offHand)) {
+        // defaultタイプの保護ブロックのみ手の入れ替えを防止
+        if (isDefaultProtectionBlock(mainHand) || isDefaultProtectionBlock(offHand)) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
         }
+    }
+
+    /**
+     * defaultタイプの保護ブロックかチェック
+     */
+    private boolean isDefaultProtectionBlock(ItemStack item) {
+        if (!ItemUtils.isProtectionBlock(item)) {
+            return false;
+        }
+        
+        String typeId = ItemUtils.getProtectionBlockTypeId(item);
+        return "default".equals(typeId);
     }
 }

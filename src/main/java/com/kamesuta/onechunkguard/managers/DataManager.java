@@ -154,6 +154,14 @@ public class DataManager {
         return playerProtections.get(playerId);
     }
 
+    /**
+     * 指定した種類のプレイヤー保護を取得
+     */
+    public ProtectionData getPlayerProtection(UUID playerId, String blockTypeId) {
+        String key = playerId.toString() + ":" + blockTypeId;
+        return playerTypeProtections.get(key);
+    }
+
     public ProtectionData getChunkProtection(String chunkKey) {
         return chunkProtections.get(chunkKey);
     }
@@ -178,6 +186,28 @@ public class DataManager {
         if (data != null) {
             String blockTypeId = data.getProtectionBlockTypeId();
             playerTypeProtections.remove(playerId.toString() + ":" + blockTypeId);
+            
+            // 保護範囲内のすべてのチャンクキーを削除
+            for (String chunkKey : data.getProtectedChunkKeys()) {
+                chunkProtections.remove(chunkKey);
+            }
+            
+            saveData();
+        }
+    }
+
+    /**
+     * 指定した種類のプレイヤー保護を削除
+     */
+    public void removeProtection(UUID playerId, String blockTypeId) {
+        String key = playerId.toString() + ":" + blockTypeId;
+        ProtectionData data = playerTypeProtections.remove(key);
+        
+        if (data != null) {
+            // メイン保護マップからも削除（後方互換性）
+            if ("default".equals(blockTypeId)) {
+                playerProtections.remove(playerId);
+            }
             
             // 保護範囲内のすべてのチャンクキーを削除
             for (String chunkKey : data.getProtectedChunkKeys()) {

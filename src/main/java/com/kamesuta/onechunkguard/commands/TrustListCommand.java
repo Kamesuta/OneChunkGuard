@@ -45,7 +45,9 @@ public class TrustListCommand implements CommandExecutor {
 
         for (UUID trustedId : trustedPlayers) {
             OfflinePlayer trustedPlayer = Bukkit.getOfflinePlayer(trustedId);
-            String status = trustedPlayer.isOnline() ? "§aオンライン" : "§7オフライン";
+            String status = trustedPlayer.isOnline() ? 
+                plugin.getConfigManager().getMessage("online-status") : 
+                plugin.getConfigManager().getMessage("offline-status");
             player.sendMessage(plugin.getConfigManager().getMessage("trust-list-entry", "{player}", trustedPlayer.getName(), "{status}", status));
         }
 

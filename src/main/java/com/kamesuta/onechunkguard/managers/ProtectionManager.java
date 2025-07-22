@@ -102,6 +102,103 @@ public class ProtectionManager {
     public boolean removeProtection(Player player, boolean returnBlock) {
         return removeProtection(player, returnBlock, false);
     }
+
+    /**
+     * 指定種類の保護を削除
+     */
+    public boolean removeProtection(Player player, String blockTypeId, boolean returnBlock) {
+        return removeProtection(player, blockTypeId, returnBlock, false);
+    }
+
+    /**
+     * 指定種類の保護を削除（詳細版）
+     */
+    public boolean removeProtection(Player player, String blockTypeId, boolean returnBlock, boolean fromBlockBreak) {
+        UUID playerId = player.getUniqueId();
+        DataManager dataManager = plugin.getDataManager();
+
+        ProtectionData protection = dataManager.getPlayerProtection(playerId, blockTypeId);
+        if (protection == null) {
+            player.sendMessage(plugin.getConfigManager().getMessage("no-protection"));
+            return false;
+        }
+
+        // WorldGuard領域を削除
+        removeWorldGuardRegion(playerId, protection.getWorldName(), protection.getProtectionBlockTypeId());
+
+        // 保護ブロックとヘッドの処理
+        Location blockLoc = protection.getProtectionBlockLocation();
+        boolean blockActuallyDestroyed = false;
+        boolean blockExistsAtLocation = false;
+        
+        if (blockLoc.getWorld() != null) {
+            Block block = blockLoc.getBlock();
+            ProtectionBlockType expectedType = plugin.getConfigManager().getProtectionBlockType(protection.getProtectionBlockTypeId());
+            
+            // 設置されているブロックが期待する種類かチェック
+            if (expectedType != null && block.getType() == expectedType.getMaterial()) {
+                blockExistsAtLocation = true;
+            }
+            
+            // ブロック破壊からの呼び出しで、実際にブロックが存在するかチェック
+            if (fromBlockBreak) {
+                if (blockExistsAtLocation) {
+                    blockActuallyDestroyed = true;
+                }
+            } else {
+                blockActuallyDestroyed = true; // コマンドからの呼び出しは常に成功とみなす
+            }
+            
+            // ブロックとヘッドを削除（コマンドからの呼び出し、またはdefaultタイプの場合）
+            if (!fromBlockBreak || "default".equals(blockTypeId)) {
+                block.setType(Material.AIR);
+
+                // 上のヘッドを削除
+                Block above = blockLoc.clone().add(0, 1, 0).getBlock();
+                if (above.getType() == Material.PLAYER_HEAD || above.getType() == Material.PLAYER_WALL_HEAD) {
+                    above.setType(Material.AIR);
+                }
+            }
+        }
+
+        // データから削除（種類指定）
+        dataManager.removeProtection(playerId, blockTypeId);
+
+        // プレイヤーに保護ブロックを返却
+        if (returnBlock) {
+            // 返却条件の判定
+            boolean shouldReturn = false;
+            if ("default".equals(blockTypeId)) {
+                shouldReturn = true; // defaultは常に返却（設置なしでも返却）
+            } else {
+                // default以外は設置されているブロックがある場合のみ返却
+                if (fromBlockBreak && blockActuallyDestroyed) {
+                    shouldReturn = true; // 物理破壊で実際にブロックが破壊された場合
+                } else if (!fromBlockBreak && blockExistsAtLocation) {
+                    shouldReturn = true; // コマンドで設置されているブロックがある場合
+                }
+            }
+            
+            if (shouldReturn) {
+                InventoryUtils.giveProtectionBlock(player, blockTypeId);
+            } else {
+                // 返却しない場合のメッセージ
+                if (fromBlockBreak && !blockActuallyDestroyed) {
+                    player.sendMessage(plugin.getConfigManager().getMessage("remote-block-not-found"));
+                } else if ("default".equals(blockTypeId)) {
+                    // defaultの場合は常に返却されるので、この分岐は通らない
+                    player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success"));
+                } else {
+                    // default以外で設置ブロックがない場合
+                    player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success-no-return"));
+                }
+                return true;
+            }
+        }
+
+        player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success"));
+        return true;
+    }
     
     public boolean removeProtection(Player player, boolean returnBlock, boolean fromBlockBreak) {
         UUID playerId = player.getUniqueId();
@@ -161,7 +258,7 @@ public class ProtectionManager {
             } else {
                 // 返却しない場合のメッセージ
                 if (fromBlockBreak && !blockActuallyDestroyed) {
-                    player.sendMessage("§c保護ブロックが見つからないため、ブロックは返却されません。");
+                    player.sendMessage(plugin.getConfigManager().getMessage("remote-block-not-found"));
                 } else {
                     player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success-no-return"));
                 }
