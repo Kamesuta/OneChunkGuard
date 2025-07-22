@@ -53,3 +53,4 @@
 - [x] plugin.ymlを英語にする
 - [x] bstatsを設定する (ID: 26619)
     - [x] READMEにbstatsのリンクを貼る、bStatsで統計を取っていることの明記
+- [x] modrinthとその他バナーをREADMEに追加

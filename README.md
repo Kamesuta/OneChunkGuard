@@ -2,6 +2,12 @@
 
 <div align="center">
 <img src="./assets/logo.png" alt="OneChunkGuard Logo" width="200">
+
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/onechunkguard?style=for-the-badge&logo=modrinth&color=00AF5C&label=Modrinth)](https://modrinth.com/plugin/onechunkguard)
+[![GitHub release](https://img.shields.io/github/v/release/kamesuta/OneChunkGuard?style=for-the-badge&logo=github)](https://github.com/kamesuta/OneChunkGuard/releases)
+[![bStats Servers](https://img.shields.io/bstats/servers/26619?style=for-the-badge&logo=minecraft&color=green)](https://bstats.org/plugin/bukkit/OneChunkGuard/26619)
+[![License](https://img.shields.io/github/license/kamesuta/OneChunkGuard?style=for-the-badge)](LICENSE)
+
 </div>
 
 [English](README_en.md) | 日本語
