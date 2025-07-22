@@ -103,6 +103,20 @@ public class ProtectionManager {
         
         // プレイヤーに保護ブロックを返却
         if (returnBlock) {
+            // 既存の保護ブロックを削除
+            for (int i = 0; i < player.getInventory().getSize(); i++) {
+                org.bukkit.inventory.ItemStack item = player.getInventory().getItem(i);
+                if (com.kamesuta.onechunkguard.utils.ItemUtils.isProtectionBlock(item)) {
+                    player.getInventory().setItem(i, null);
+                }
+            }
+            
+            // スロット9に物があれば落とす
+            org.bukkit.inventory.ItemStack existingItem = player.getInventory().getItem(8);
+            if (existingItem != null && !existingItem.getType().isAir()) {
+                player.getWorld().dropItemNaturally(player.getLocation(), existingItem);
+            }
+            
             player.getInventory().setItem(8, com.kamesuta.onechunkguard.utils.ItemUtils.createProtectionBlock());
         }
         

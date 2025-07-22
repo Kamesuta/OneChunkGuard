@@ -9,18 +9,25 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class PlayerInteractListener implements Listener {
     private final OneChunkGuard plugin;
+    private final Map<UUID, Long> lastInteraction = new HashMap<>();
+    private static final long COOLDOWN_MS = 500; // 500ms のクールダウン
     
     public PlayerInteractListener(OneChunkGuard plugin) {
         this.plugin = plugin;
     }
     
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
@@ -46,6 +53,18 @@ public class PlayerInteractListener implements Listener {
                 // 所有者ではないのでUIを表示しない
                 return;
             }
+            
+            // クールダウンチェック
+            UUID playerId = player.getUniqueId();
+            long currentTime = System.currentTimeMillis();
+            Long lastTime = lastInteraction.get(playerId);
+            
+            if (lastTime != null && currentTime - lastTime < COOLDOWN_MS) {
+                event.setCancelled(true);
+                return;
+            }
+            
+            lastInteraction.put(playerId, currentTime);
             
             // チャットTUIを表示
             showChatTUI(player);

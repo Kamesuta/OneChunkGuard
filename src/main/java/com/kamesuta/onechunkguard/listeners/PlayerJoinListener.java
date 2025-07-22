@@ -21,6 +21,12 @@ public class PlayerJoinListener implements Listener {
         
         // プレイヤーが既に保護ブロックを受け取っているかチェック
         if (!plugin.getDataManager().hasReceivedProtectionBlock(player.getUniqueId())) {
+            // スロット9に物があれば落とす
+            ItemStack existingItem = player.getInventory().getItem(8);
+            if (existingItem != null && !existingItem.getType().isAir()) {
+                player.getWorld().dropItemNaturally(player.getLocation(), existingItem);
+            }
+            
             // ホットバー9番目（インデックス8）に保護ブロックを給与
             ItemStack protectionBlock = ItemUtils.createProtectionBlock();
             player.getInventory().setItem(8, protectionBlock);
