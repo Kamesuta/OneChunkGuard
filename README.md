@@ -2,7 +2,7 @@
 
 [English](README_en.md) | 日本語
 
-> 🏆 **直感的で平等な1チャンク保護プラグイン** for Minecraft
+> 🏆 **ブロック置くだけ1チャンク保護プラグイン** for Minecraft
 
 OneChunkGuardは、**初心者からマイクラプロまで**誰でも簡単に使えるシンプルな土地保護プラグインです。  
 WorldGuard APIを活用し、コマンド不要の直感的操作と便利性を両立させました。
@@ -21,7 +21,7 @@ WorldGuard APIを活用し、コマンド不要の直感的操作と便利性を
 - ✨ **チャンクビジュアライザー** - パーティクルでチャンク境界を表示
 
 ### 🛡️ **柔軟な保護システム**
-- 🏗️ **複数保護ブロック種類対応** - 区画に応じてスポーン区画(1x1チャンク)、VIP区画(3x3チャンク)など多層保護可能
+- 🏗️ **複数保護ブロック種類対応** - 区画に応じてスポーン区画(1x1チャンク)、VIP区画(3x3チャンク)など多層保護可能 (設定可能)
 - 📐 **可変チャンク範囲** - 1x1からNxNまで自由に設定可能
 - 🏛️ **親リージョン制限** - 特定エリア専用の保護ブロック設定
 - 🔄 **独立保護管理** - 区画ごとに独立した保護の作成・解除
@@ -41,10 +41,11 @@ WorldGuard APIを活用し、コマンド不要の直感的操作と便利性を
 
 ## 🚀 インストール方法
 
-1. [Releases](https://github.com/kamesuta/OneChunkGuard/releases)から最新版をダウンロード
-2. `plugins`フォルダに`OneChunkGuard-X.X.X.jar`を配置
-3. サーバーを再起動
-4. プラグインが正常に読み込まれたことを確認
+1. [WorldGuard](https://modrinth.com/plugin/worldguard)と[WorldEdit](https://modrinth.com/plugin/worldedit)をインストール
+2. [Releases](https://github.com/kamesuta/OneChunkGuard/releases)から最新版をダウンロード
+3. `plugins`フォルダに`OneChunkGuard-X.X.X.jar`を配置
+4. サーバーを再起動
+5. プラグインが正常に読み込まれたことを確認
 
 ## 🎯 使い方（とってもシンプル！）
 

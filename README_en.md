@@ -2,7 +2,7 @@
 
 English | [日本語](README.md)
 
-> 🏆 **The Most Intuitive and Fair 1-Chunk Protection Plugin** for Minecraft
+> 🏆 **Just Place a Block - 1 Chunk Protection Plugin** for Minecraft
 
 OneChunkGuard is a simple land protection plugin that **anyone from beginners to Minecraft pros** can use easily.  
 Leveraging the WorldGuard API, it combines intuitive no-command operation with convenience.
@@ -21,7 +21,7 @@ Leveraging the WorldGuard API, it combines intuitive no-command operation with c
 - ✨ **Chunk Visualizer** - Particles display chunk boundaries
 
 ### 🛡️ **Flexible Protection System**
-- 🏗️ **Multiple Protection Block Types** - Multi-layer protection like spawn areas (1x1 chunk), VIP areas (3x3 chunks)
+- 🏗️ **Multiple Protection Block Types** - Multi-layer protection like spawn areas (1x1 chunk), VIP areas (3x3 chunks) (configurable)
 - 📐 **Variable Chunk Range** - Freely configurable from 1x1 to NxN
 - 🏛️ **Parent Region Restrictions** - Protection blocks for specific areas only
 - 🔄 **Independent Protection Management** - Create and remove protection independently by area type
@@ -41,10 +41,11 @@ Leveraging the WorldGuard API, it combines intuitive no-command operation with c
 
 ## 🚀 Installation
 
-1. Download the latest version from [Releases](https://github.com/kamesuta/OneChunkGuard/releases)
-2. Place `OneChunkGuard-X.X.X.jar` in the `plugins` folder
-3. Restart the server
-4. Confirm the plugin loaded successfully
+1. Install [WorldGuard](https://modrinth.com/plugin/worldguard) and [WorldEdit](https://modrinth.com/plugin/worldedit)
+2. Download the latest version from [Releases](https://github.com/kamesuta/OneChunkGuard/releases)
+3. Place `OneChunkGuard-X.X.X.jar` in the `plugins` folder
+4. Restart the server
+5. Confirm the plugin loaded successfully
 
 ## 🎯 How to Use (So Simple!)
 
