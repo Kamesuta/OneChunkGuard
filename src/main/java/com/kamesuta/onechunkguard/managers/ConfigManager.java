@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 public class ConfigManager {
     private final OneChunkGuard plugin;
     private final FileConfiguration config;
-    
+
     public ConfigManager(OneChunkGuard plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
     }
-    
+
     public Material getProtectionBlockMaterial() {
         String materialName = config.getString("protection-block.material", "END_STONE");
         try {
@@ -26,23 +26,23 @@ public class ConfigManager {
             return Material.END_STONE;
         }
     }
-    
+
     public String getProtectionBlockDisplayName() {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("protection-block.display-name", "&6&l保護ブロック"));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("protection-block.display-name", "&6&l保護ブロック"));
     }
-    
+
     public List<String> getProtectionBlockLore() {
         return config.getStringList("protection-block.lore").stream()
-            .map(line -> ChatColor.translateAlternateColorCodes('&', line))
-            .collect(Collectors.toList());
+                .map(line -> ChatColor.translateAlternateColorCodes('&', line))
+                .collect(Collectors.toList());
     }
-    
+
     public String getMessage(String key) {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("messages." + key, "&cMessage not found: " + key));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("messages." + key, "&cMessage not found: " + key));
     }
-    
+
     public String getMessage(String key, String... replacements) {
         String message = getMessage(key);
         for (int i = 0; i < replacements.length; i += 2) {
@@ -52,44 +52,44 @@ public class ConfigManager {
         }
         return message;
     }
-    
+
     public int getMinY() {
         return config.getInt("protection.min-y", -64);
     }
-    
+
     public int getMaxY() {
         return config.getInt("protection.max-y", 320);
     }
-    
+
     public int getMaxTrustedPlayers() {
         return config.getInt("protection.max-trusted-players", 5);
     }
-    
+
     public String getChatUIHeader() {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("chat-ui.header", "&6━━━━━ チャンク保護設定 ━━━━━"));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("chat-ui.header", "&6━━━━━ チャンク保護設定 ━━━━━"));
     }
-    
+
     public String getChatUIAddMember() {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("chat-ui.add-member", "&a[メンバー追加]"));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("chat-ui.add-member", "&a[メンバー追加]"));
     }
-    
+
     public String getChatUIRemoveMember() {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("chat-ui.remove-member", "&c[メンバー削除]"));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("chat-ui.remove-member", "&c[メンバー削除]"));
     }
-    
+
     public String getChatUIListMembers() {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("chat-ui.list-members", "&b[メンバー一覧]"));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("chat-ui.list-members", "&b[メンバー一覧]"));
     }
-    
+
     public String getChatUIFooter() {
-        return ChatColor.translateAlternateColorCodes('&', 
-            config.getString("chat-ui.footer", "&6━━━━━━━━━━━━━━━━━━━"));
+        return ChatColor.translateAlternateColorCodes('&',
+                config.getString("chat-ui.footer", "&6━━━━━━━━━━━━━━━━━━━"));
     }
-    
+
     public boolean isShowOwnerActionBar() {
         return config.getBoolean("protection.show-owner-actionbar", true);
     }

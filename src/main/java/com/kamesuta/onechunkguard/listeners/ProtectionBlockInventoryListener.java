@@ -21,62 +21,62 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ProtectionBlockInventoryListener implements Listener {
     private final OneChunkGuard plugin;
-    
+
     public ProtectionBlockInventoryListener(OneChunkGuard plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        
+
         ItemStack clickedItem = event.getCurrentItem();
         ItemStack cursorItem = event.getCursor();
-        
+
         // 保護ブロックが移動されているかチェック
         if (ItemUtils.isProtectionBlock(clickedItem) || ItemUtils.isProtectionBlock(cursorItem)) {
             // すべての保護ブロックの移動を防止
             event.setCancelled(true);
             player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
-            
+
             // 次のティックで保護ブロックを正しい位置に戻す
             Bukkit.getScheduler().runTask(plugin, () -> {
                 InventoryUtils.giveProtectionBlock(player);
             });
         }
     }
-    
+
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        
+
         // ドラッグされたアイテムが保護ブロックかチェック
         if (ItemUtils.isProtectionBlock(event.getOldCursor()) || ItemUtils.isProtectionBlock(event.getCursor())) {
             event.setCancelled(true);
             player.sendMessage(plugin.getConfigManager().getMessage("cannot-move-item"));
         }
     }
-    
+
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         ItemStack droppedItem = event.getItemDrop().getItemStack();
-        
+
         // 保護ブロックがドロップされたかチェック
         if (ItemUtils.isProtectionBlock(droppedItem)) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(plugin.getConfigManager().getMessage("cannot-drop-item"));
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         // 死亡時のドロップから保護ブロックを削除
         event.getDrops().removeIf(ItemUtils::isProtectionBlock);
-        
+
         // 死亡後のリスポーン時に保護ブロックを再配置
         Player player = event.getEntity();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -85,12 +85,12 @@ public class ProtectionBlockInventoryListener implements Listener {
             }
         }, 5L); // 5ティック後に実行
     }
-    
+
     @EventHandler
     public void onPlayerSwapHandItems(PlayerSwapHandItemsEvent event) {
         ItemStack mainHand = event.getMainHandItem();
         ItemStack offHand = event.getOffHandItem();
-        
+
         // どちらかの手に保護ブロックがあるかチェック
         if (ItemUtils.isProtectionBlock(mainHand) || ItemUtils.isProtectionBlock(offHand)) {
             event.setCancelled(true);
