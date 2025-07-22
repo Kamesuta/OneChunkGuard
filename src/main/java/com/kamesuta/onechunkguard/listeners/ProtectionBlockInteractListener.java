@@ -77,30 +77,30 @@ public class ProtectionBlockInteractListener implements Listener {
 
     private void showChatTUI(Player player) {
         // ヘッダー
-        player.sendMessage(plugin.getConfigManager().getChatUIHeader());
+        player.sendMessage(plugin.getConfigManager().getMessage("chat-ui.header"));
 
         // メンバー追加ボタン
-        TextComponent addMemberButton = new TextComponent(plugin.getConfigManager().getChatUIAddMember());
+        TextComponent addMemberButton = new TextComponent(plugin.getConfigManager().getMessage("chat-ui.add-member"));
         addMemberButton.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/trust "));
         addMemberButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("クリックして /trust コマンドを入力").create()));
+                new ComponentBuilder(plugin.getConfigManager().getMessage("chat-ui.add-member-hover")).create()));
         player.spigot().sendMessage(addMemberButton);
 
         // メンバー削除ボタン
-        TextComponent removeMemberButton = new TextComponent(plugin.getConfigManager().getChatUIRemoveMember());
+        TextComponent removeMemberButton = new TextComponent(plugin.getConfigManager().getMessage("chat-ui.remove-member"));
         removeMemberButton.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/untrust "));
         removeMemberButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("クリックして /untrust コマンドを入力").create()));
+                new ComponentBuilder(plugin.getConfigManager().getMessage("chat-ui.remove-member-hover")).create()));
         player.spigot().sendMessage(removeMemberButton);
 
         // メンバー一覧ボタン
-        TextComponent listMembersButton = new TextComponent(plugin.getConfigManager().getChatUIListMembers());
+        TextComponent listMembersButton = new TextComponent(plugin.getConfigManager().getMessage("chat-ui.list-members"));
         listMembersButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/trustlist"));
         listMembersButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("クリックして信頼されたプレイヤー一覧を表示").create()));
+                new ComponentBuilder(plugin.getConfigManager().getMessage("chat-ui.list-members-hover")).create()));
         player.spigot().sendMessage(listMembersButton);
 
         // フッター
-        player.sendMessage(plugin.getConfigManager().getChatUIFooter());
+        player.sendMessage(plugin.getConfigManager().getMessage("chat-ui.footer"));
     }
 }

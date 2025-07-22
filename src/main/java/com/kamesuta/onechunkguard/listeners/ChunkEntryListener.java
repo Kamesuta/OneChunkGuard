@@ -56,7 +56,7 @@ public class ChunkEntryListener implements Listener {
 
         if (protection != null) {
             String ownerName = Bukkit.getOfflinePlayer(protection.getOwner()).getName();
-            if (ownerName == null) ownerName = "不明なプレイヤー";
+            if (ownerName == null) ownerName = plugin.getConfigManager().getMessage("unknown-player");
 
             String message = plugin.getConfigManager().getMessage("owner-info", "{owner}", ownerName);
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));

@@ -60,6 +60,7 @@ restricted-area-message: "&cThis area is exclusive to {area_name}! You need a sp
 # Status
 online-status: "&aOnline"
 offline-status: "&7Offline"
+unknown-player: "Unknown Player"
 
 # Chat UI
 chat-ui:
@@ -68,3 +69,6 @@ chat-ui:
   remove-member: "&c[Remove Member]"
   list-members: "&b[Member List]"
   footer: "&6━━━━━━━━━━━━━━━━━━━"
+  add-member-hover: "Click to enter /trust command"
+  remove-member-hover: "Click to enter /untrust command"
+  list-members-hover: "Click to show trusted player list"

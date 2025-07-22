@@ -71,7 +71,7 @@ public class OneChunkGuard extends JavaPlugin {
         getCommand("giveprotectionblock").setExecutor(giveCommand);
         getCommand("giveprotectionblock").setTabCompleter(giveCommand);
 
-        getLogger().info("OneChunkGuardが有効になりました！");
+        getLogger().info("OneChunkGuard has been enabled!");
     }
 
     @Override
@@ -79,7 +79,7 @@ public class OneChunkGuard extends JavaPlugin {
         if (dataManager != null) {
             dataManager.saveAll();
         }
-        getLogger().info("OneChunkGuardが無効になりました！");
+        getLogger().info("OneChunkGuard has been disabled!");
     }
 
     public ConfigManager getConfigManager() {

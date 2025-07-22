@@ -46,7 +46,7 @@ public class DataManager {
                 try {
                     playersWithBlock.add(UUID.fromString(uuidStr));
                 } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("players-with-blockに無効なUUID: " + uuidStr);
+                    plugin.getLogger().warning("Invalid UUID in players-with-block: " + uuidStr);
                 }
             }
         }
@@ -73,7 +73,7 @@ public class DataManager {
                                 try {
                                     trusted.add(UUID.fromString(trustedUuid));
                                 } catch (IllegalArgumentException e) {
-                                    plugin.getLogger().warning("無効な信頼プレイヤーUUID: " + trustedUuid);
+                                    plugin.getLogger().warning("Invalid trusted player UUID: " + trustedUuid);
                                 }
                             }
                         }
@@ -92,7 +92,7 @@ public class DataManager {
                         }
                     }
                 } catch (Exception e) {
-                    plugin.getLogger().warning("保護データの読み込みに失敗: " + uuidStr + ": " + e.getMessage());
+                    plugin.getLogger().warning("Failed to load protection data: " + uuidStr + ": " + e.getMessage());
                 }
             }
         }
@@ -133,7 +133,7 @@ public class DataManager {
         try {
             dataConfig.save(dataFile);
         } catch (IOException e) {
-            plugin.getLogger().severe("データ保存に失敗: " + e.getMessage());
+            plugin.getLogger().severe("Failed to save data: " + e.getMessage());
         }
     }
 

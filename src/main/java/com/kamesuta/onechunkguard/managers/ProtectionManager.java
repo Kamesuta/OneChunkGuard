@@ -407,7 +407,7 @@ public class ProtectionManager {
         World world = chunks.get(0).getWorld();
         RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
         if (regionManager == null) {
-            plugin.getLogger().warning("ワールドのRegionManagerを取得できません: " + world.getName());
+            plugin.getLogger().warning("Cannot get RegionManager for world: " + world.getName());
             return false;
         }
 

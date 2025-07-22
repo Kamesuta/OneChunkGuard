@@ -84,7 +84,7 @@ public class ConfigManager {
             }
             
             String displayName = ChatColor.translateAlternateColorCodes('&', 
-                typeSection.getString("display-name", "&6&l保護ブロック"));
+                typeSection.getString("display-name", "&6&lProtection Block"));
             List<String> lore = typeSection.getStringList("lore").stream()
                 .map(line -> ChatColor.translateAlternateColorCodes('&', line))
                 .collect(Collectors.toList());
@@ -145,7 +145,7 @@ public class ConfigManager {
     @Deprecated
     public String getProtectionBlockDisplayName() {
         ProtectionBlockType defaultType = getDefaultProtectionBlockType();
-        return defaultType != null ? defaultType.getDisplayName() : "&6&l保護ブロック";
+        return defaultType != null ? defaultType.getDisplayName() : "&6&lProtection Block";
     }
     
     /**
@@ -157,7 +157,7 @@ public class ConfigManager {
         if (defaultType != null) {
             return defaultType.getLore();
         }
-        return List.of("&7このブロックを設置すると", "&7チャンクが保護されます", "&c1人1チャンクまで！");
+        return List.of("&7Place this block to", "&7protect a chunk", "&cOne chunk per person!");
     }
 
     /**
@@ -235,26 +235,6 @@ public class ConfigManager {
 
     public int getMaxTrustedPlayers() {
         return langConfig.getInt("protection.max-trusted-players", 5);
-    }
-
-    public String getChatUIHeader() {
-        return getMessage("chat-ui.header");
-    }
-
-    public String getChatUIAddMember() {
-        return getMessage("chat-ui.add-member");
-    }
-
-    public String getChatUIRemoveMember() {
-        return getMessage("chat-ui.remove-member");
-    }
-
-    public String getChatUIListMembers() {
-        return getMessage("chat-ui.list-members");
-    }
-
-    public String getChatUIFooter() {
-        return getMessage("chat-ui.footer");
     }
 
     public boolean isShowOwnerActionBar() {

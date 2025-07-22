@@ -48,3 +48,5 @@
     - [x] READMEは相互に言語リンクを貼る
     - [x] config.ymlから言語キーを設定できるようにし、言語ymlを読み込むようにする
     - [x] config.ymlもconfig_en.ymlとconfig_ja.ymlに分ける。config.ymlは言語だけ設定
+- [x] i18n漏れがあります。
+- [x] コンフィグにある、getMessageするだけの関数いらない気がする

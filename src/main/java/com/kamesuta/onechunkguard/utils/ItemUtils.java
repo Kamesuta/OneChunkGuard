@@ -64,8 +64,8 @@ public class ItemUtils {
         ItemStack item = new ItemStack(Material.END_STONE);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("§6§l保護ブロック");
-            meta.setLore(List.of("§7このブロックを設置すると", "§7チャンクが保護されます", "§c1人1チャンクまで！"));
+            meta.setDisplayName("§6§lProtection Block");
+            meta.setLore(List.of("§7Place this block to", "§7protect a chunk", "§cOne chunk per person!"));
             meta.getPersistentDataContainer().set(PROTECTION_BLOCK_KEY, PersistentDataType.BOOLEAN, true);
             meta.getPersistentDataContainer().set(PROTECTION_BLOCK_TYPE_KEY, PersistentDataType.STRING, "default");
             item.setItemMeta(meta);
