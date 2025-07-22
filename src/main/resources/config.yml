@@ -58,6 +58,7 @@ messages:
   protection-given: "&7ホットバー9番目に保護ブロックを配置しました！"
   outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
   no-permission: "&c権限がありません！"
+  unprotect-success-no-return: "&a保護を解除しました！（ブロックは返却されません）"
 
 # 保護設定
 protection:

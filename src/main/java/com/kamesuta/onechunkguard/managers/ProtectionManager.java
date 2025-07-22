@@ -75,9 +75,9 @@ public class ProtectionManager {
             }
         }
 
-        // 各チャンクの既存のWorldGuard領域をチェック
+        // 各チャンクの既存のWorldGuard領域をチェック（親regionは除外）
         for (Chunk chunk : protectedChunks) {
-            if (hasExistingRegions(chunk)) {
+            if (hasExistingRegions(chunk, blockType.getParentRegion())) {
                 player.sendMessage(plugin.getConfigManager().getMessage("region-overlap"));
                 return false;
             }
@@ -100,6 +100,10 @@ public class ProtectionManager {
     }
 
     public boolean removeProtection(Player player, boolean returnBlock) {
+        return removeProtection(player, returnBlock, false);
+    }
+    
+    public boolean removeProtection(Player player, boolean returnBlock, boolean fromBlockBreak) {
         UUID playerId = player.getUniqueId();
         DataManager dataManager = plugin.getDataManager();
 
@@ -130,7 +134,15 @@ public class ProtectionManager {
 
         // プレイヤーに保護ブロックを返却
         if (returnBlock) {
-            InventoryUtils.giveProtectionBlock(player);
+            // default以外のブロックは破壊時以外は返却しない
+            String blockTypeId = protection.getProtectionBlockTypeId();
+            if ("default".equals(blockTypeId) || fromBlockBreak) {
+                InventoryUtils.giveProtectionBlock(player, blockTypeId);
+            } else {
+                // default以外で/unprotectコマンドから呼ばれた場合は返却しない
+                player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success-no-return"));
+                return true;
+            }
         }
 
         player.sendMessage(plugin.getConfigManager().getMessage("unprotect-success"));
@@ -164,6 +176,10 @@ public class ProtectionManager {
     }
 
     private boolean hasExistingRegions(Chunk chunk) {
+        return hasExistingRegions(chunk, null);
+    }
+    
+    private boolean hasExistingRegions(Chunk chunk, String excludeParentRegion) {
         World world = chunk.getWorld();
         RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
         if (regionManager == null) return false;
@@ -181,7 +197,21 @@ public class ProtectionManager {
         ApplicableRegionSet regions = regionManager.getApplicableRegions(
                 new ProtectedCuboidRegion("temp", min, max));
 
-        return regions.size() > 0;
+        // 領域が存在する場合、親regionを除外してチェック
+        if (regions.size() > 0) {
+            if (excludeParentRegion != null && !excludeParentRegion.trim().isEmpty()) {
+                // 親region以外の領域があるかチェック
+                for (ProtectedRegion region : regions) {
+                    if (!region.getId().equals(excludeParentRegion)) {
+                        return true; // 親region以外の領域が存在
+                    }
+                }
+                return false; // 親regionのみ
+            }
+            return true; // 親region除外指定なし、何らかの領域が存在
+        }
+        
+        return false; // 領域なし
     }
 
     /**

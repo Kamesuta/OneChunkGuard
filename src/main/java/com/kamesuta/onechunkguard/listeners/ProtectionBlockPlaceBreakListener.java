@@ -69,8 +69,8 @@ public class ProtectionBlockPlaceBreakListener implements Listener {
                 return;
             }
 
-            // 保護を解除
-            plugin.getProtectionManager().removeProtection(player, true);
+            // 保護を解除（ブロック破壊からの呼び出しなのでtrue）
+            plugin.getProtectionManager().removeProtection(player, true, true);
 
             // デフォルトのブロック破壊をキャンセルして手動で処理
             event.setCancelled(true);

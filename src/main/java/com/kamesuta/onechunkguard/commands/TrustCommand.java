@@ -36,14 +36,73 @@ public class TrustCommand implements CommandExecutor {
             return true;
         }
 
-        // 対象プレイヤーを検索
-        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+        // セレクター対応でプレイヤーを検索
+        Player target = null;
+        String playerName = args[0];
+        
+        try {
+            // セレクター（@p, @r, @a[name=...]等）の場合
+            if (playerName.startsWith("@")) {
+                var selectedEntities = Bukkit.selectEntities(player, playerName);
+                if (selectedEntities.isEmpty()) {
+                    player.sendMessage(plugin.getConfigManager().getMessage("player-not-found"));
+                    return true;
+                }
+                var entity = selectedEntities.get(0);
+                if (!(entity instanceof Player)) {
+                    player.sendMessage(plugin.getConfigManager().getMessage("player-not-found"));
+                    return true;
+                }
+                target = (Player) entity;
+            } else {
+                // 通常のプレイヤー名の場合
+                target = Bukkit.getPlayer(playerName);
+                if (target == null) {
+                    // オフラインプレイヤーとして検索
+                    OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(playerName);
+                    if (!offlineTarget.hasPlayedBefore()) {
+                        player.sendMessage(plugin.getConfigManager().getMessage("player-not-found"));
+                        return true;
+                    }
+                    // オフラインプレイヤーの処理は従来通り
+                    return handleOfflinePlayer(player, protection, offlineTarget);
+                }
+            }
+        } catch (Exception e) {
+            player.sendMessage(plugin.getConfigManager().getMessage("player-not-found"));
+            return true;
+        }
+        
         // 自分自身をtrustしようとした場合
         if (target.getUniqueId().equals(player.getUniqueId())) {
             player.sendMessage(plugin.getConfigManager().getMessage("cannot-trust-self"));
             return true;
         }
 
+        // 既に信頼されているかチェック
+        if (protection.isTrusted(target.getUniqueId())) {
+            player.sendMessage(plugin.getConfigManager().getMessage("already-trusted", "{player}", target.getName()));
+            return true;
+        }
+
+        // 信頼上限をチェック
+        if (protection.getTrustedPlayers().size() >= plugin.getConfigManager().getMaxTrustedPlayers()) {
+            player.sendMessage(plugin.getConfigManager().getMessage("trust-limit"));
+            return true;
+        }
+
+        // 信頼プレイヤーを追加
+        plugin.getProtectionManager().addTrustedPlayer(player.getUniqueId(), target.getUniqueId());
+
+        player.sendMessage(plugin.getConfigManager().getMessage("trust-success", "{player}", target.getName()));
+
+        return true;
+    }
+    
+    /**
+     * オフラインプレイヤーの処理
+     */
+    private boolean handleOfflinePlayer(Player player, ProtectionData protection, OfflinePlayer target) {
         // 既に信頼されているかチェック
         if (protection.isTrusted(target.getUniqueId())) {
             player.sendMessage(plugin.getConfigManager().getMessage("already-trusted", "{player}", target.getName()));
