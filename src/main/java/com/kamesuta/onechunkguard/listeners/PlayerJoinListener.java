@@ -20,7 +20,7 @@ public class PlayerJoinListener implements Listener {
 
         // プレイヤーが既に保護ブロックを受け取っているかチェック
         if (!plugin.getDataManager().hasReceivedProtectionBlock(player.getUniqueId())) {
-            // 保護ブロックを配布
+            // デフォルトの保護ブロックを配布（複数種類がある場合はデフォルトを配布）
             InventoryUtils.giveProtectionBlock(player);
 
             // プレイヤーがブロックを受け取ったことをマーク

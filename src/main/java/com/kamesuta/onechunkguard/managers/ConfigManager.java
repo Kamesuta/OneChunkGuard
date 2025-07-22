@@ -1,41 +1,126 @@
 package com.kamesuta.onechunkguard.managers;
 
 import com.kamesuta.onechunkguard.OneChunkGuard;
+import com.kamesuta.onechunkguard.models.ProtectionBlockType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ConfigManager {
     private final OneChunkGuard plugin;
     private final FileConfiguration config;
+    private final Map<String, ProtectionBlockType> protectionBlockTypes = new HashMap<>();
 
     public ConfigManager(OneChunkGuard plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
+        loadProtectionBlockTypes();
     }
 
-    public Material getProtectionBlockMaterial() {
-        String materialName = config.getString("protection-block.material", "END_STONE");
-        try {
-            return Material.valueOf(materialName);
-        } catch (IllegalArgumentException e) {
-            plugin.getLogger().warning("Invalid material: " + materialName + ", using END_STONE");
-            return Material.END_STONE;
+    /**
+     * 保護ブロックタイプを読み込み
+     */
+    private void loadProtectionBlockTypes() {
+        protectionBlockTypes.clear();
+        ConfigurationSection section = config.getConfigurationSection("protection-blocks");
+        
+        if (section == null) {
+            plugin.getLogger().warning("protection-blocks section not found in config.yml");
+            return;
         }
-    }
-
-    public String getProtectionBlockDisplayName() {
-        return ChatColor.translateAlternateColorCodes('&',
-                config.getString("protection-block.display-name", "&6&l保護ブロック"));
-    }
-
-    public List<String> getProtectionBlockLore() {
-        return config.getStringList("protection-block.lore").stream()
+        
+        for (String typeId : section.getKeys(false)) {
+            ConfigurationSection typeSection = section.getConfigurationSection(typeId);
+            if (typeSection == null) continue;
+            
+            String materialName = typeSection.getString("material", "END_STONE");
+            Material material;
+            try {
+                material = Material.valueOf(materialName);
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Invalid material for " + typeId + ": " + materialName + ", skipping");
+                continue;
+            }
+            
+            String displayName = ChatColor.translateAlternateColorCodes('&', 
+                typeSection.getString("display-name", "&6&l保護ブロック"));
+            List<String> lore = typeSection.getStringList("lore").stream()
                 .map(line -> ChatColor.translateAlternateColorCodes('&', line))
                 .collect(Collectors.toList());
+            String parentRegion = typeSection.getString("parent-region", "");
+            int chunkRange = typeSection.getInt("chunk-range", 1);
+            
+            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange);
+            protectionBlockTypes.put(typeId, type);
+        }
+        
+        if (protectionBlockTypes.isEmpty()) {
+            plugin.getLogger().warning("No valid protection block types found in config.yml");
+        } else {
+            plugin.getLogger().info("Loaded " + protectionBlockTypes.size() + " protection block types");
+        }
+    }
+    
+    /**
+     * すべての保護ブロックタイプを取得
+     */
+    public Map<String, ProtectionBlockType> getProtectionBlockTypes() {
+        return new HashMap<>(protectionBlockTypes);
+    }
+    
+    /**
+     * 指定IDの保護ブロックタイプを取得
+     */
+    public ProtectionBlockType getProtectionBlockType(String typeId) {
+        return protectionBlockTypes.get(typeId);
+    }
+    
+    /**
+     * デフォルトの保護ブロックタイプを取得
+     */
+    public ProtectionBlockType getDefaultProtectionBlockType() {
+        ProtectionBlockType defaultType = protectionBlockTypes.get("default");
+        if (defaultType != null) {
+            return defaultType;
+        }
+        // デフォルトがない場合は最初のタイプを返す
+        return protectionBlockTypes.values().stream().findFirst().orElse(null);
+    }
+    
+    /**
+     * 後方互換性のためのメソッド
+     */
+    @Deprecated
+    public Material getProtectionBlockMaterial() {
+        ProtectionBlockType defaultType = getDefaultProtectionBlockType();
+        return defaultType != null ? defaultType.getMaterial() : Material.END_STONE;
+    }
+    
+    /**
+     * 後方互換性のためのメソッド
+     */
+    @Deprecated
+    public String getProtectionBlockDisplayName() {
+        ProtectionBlockType defaultType = getDefaultProtectionBlockType();
+        return defaultType != null ? defaultType.getDisplayName() : "&6&l保護ブロック";
+    }
+    
+    /**
+     * 後方互換性のためのメソッド
+     */
+    @Deprecated
+    public List<String> getProtectionBlockLore() {
+        ProtectionBlockType defaultType = getDefaultProtectionBlockType();
+        if (defaultType != null) {
+            return defaultType.getLore();
+        }
+        return List.of("&7このブロックを設置すると", "&7チャンクが保護されます", "&c1人1チャンクまで！");
     }
 
     public String getMessage(String key) {

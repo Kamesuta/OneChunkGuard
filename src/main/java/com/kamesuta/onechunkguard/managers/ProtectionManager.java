@@ -2,7 +2,9 @@ package com.kamesuta.onechunkguard.managers;
 
 import com.kamesuta.onechunkguard.OneChunkGuard;
 import com.kamesuta.onechunkguard.models.ProtectionData;
+import com.kamesuta.onechunkguard.models.ProtectionBlockType;
 import com.kamesuta.onechunkguard.utils.InventoryUtils;
+import com.kamesuta.onechunkguard.utils.ItemUtils;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -12,10 +14,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class ProtectionManager {
@@ -25,7 +30,7 @@ public class ProtectionManager {
         this.plugin = plugin;
     }
 
-    public boolean createProtection(Player player, Location blockLocation) {
+    public boolean createProtection(Player player, Location blockLocation, ItemStack protectionItem) {
         UUID playerId = player.getUniqueId();
         DataManager dataManager = plugin.getDataManager();
 
@@ -35,31 +40,56 @@ public class ProtectionManager {
             return false;
         }
 
-        Chunk chunk = blockLocation.getChunk();
-        String chunkKey = blockLocation.getWorld().getName() + ":" + chunk.getX() + ":" + chunk.getZ();
-
-        // チャンクが既に保護されているかチェック
-        ProtectionData existingProtection = dataManager.getChunkProtection(chunkKey);
-        if (existingProtection != null) {
-            String ownerName = Bukkit.getOfflinePlayer(existingProtection.getOwner()).getName();
-            player.sendMessage(plugin.getConfigManager().getMessage("region-overlap"));
-            player.sendMessage(plugin.getConfigManager().getMessage("owner-info", "{owner}", ownerName));
+        // 保護ブロックのタイプを取得
+        String typeId = ItemUtils.getProtectionBlockTypeId(protectionItem);
+        if (typeId == null) {
+            typeId = "default";
+        }
+        
+        ProtectionBlockType blockType = plugin.getConfigManager().getProtectionBlockType(typeId);
+        if (blockType == null) {
+            plugin.getLogger().warning("Unknown protection block type: " + typeId);
             return false;
         }
 
-        // 既存のWorldGuard領域をチェック
-        if (hasExistingRegions(chunk)) {
-            player.sendMessage(plugin.getConfigManager().getMessage("region-overlap"));
-            return false;
+        // 親region制限をチェック
+        if (blockType.hasParentRegionRestriction()) {
+            if (!isInParentRegion(blockLocation, blockType.getParentRegion())) {
+                player.sendMessage(plugin.getConfigManager().getMessage("outside-parent-region", "{region}", blockType.getParentRegion()));
+                return false;
+            }
+        }
+
+        // 保護範囲内のすべてのチャンクをチェック
+        List<Chunk> protectedChunks = getProtectedChunks(blockLocation, blockType.getChunkRange());
+        
+        // 各チャンクが既に保護されているかチェック
+        for (Chunk chunk : protectedChunks) {
+            String chunkKey = chunk.getWorld().getName() + ":" + chunk.getX() + ":" + chunk.getZ();
+            ProtectionData existingProtection = dataManager.getChunkProtection(chunkKey);
+            if (existingProtection != null) {
+                String ownerName = Bukkit.getOfflinePlayer(existingProtection.getOwner()).getName();
+                player.sendMessage(plugin.getConfigManager().getMessage("region-overlap"));
+                player.sendMessage(plugin.getConfigManager().getMessage("owner-info", "{owner}", ownerName));
+                return false;
+            }
+        }
+
+        // 各チャンクの既存のWorldGuard領域をチェック
+        for (Chunk chunk : protectedChunks) {
+            if (hasExistingRegions(chunk)) {
+                player.sendMessage(plugin.getConfigManager().getMessage("region-overlap"));
+                return false;
+            }
         }
 
         // WorldGuard領域を作成
-        if (!createWorldGuardRegion(player, chunk)) {
+        if (!createWorldGuardRegion(player, protectedChunks, blockType)) {
             return false;
         }
 
         // 保護データを作成
-        ProtectionData protection = new ProtectionData(playerId, blockLocation);
+        ProtectionData protection = new ProtectionData(playerId, blockLocation, typeId, blockType.getChunkRange());
         dataManager.addProtection(protection);
 
         // プレイヤーヘッドを設置
@@ -154,8 +184,51 @@ public class ProtectionManager {
         return regions.size() > 0;
     }
 
-    private boolean createWorldGuardRegion(Player player, Chunk chunk) {
-        World world = chunk.getWorld();
+    /**
+     * 親region内かチェック
+     */
+    private boolean isInParentRegion(Location location, String parentRegionName) {
+        World world = location.getWorld();
+        RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
+        if (regionManager == null) {
+            return false;
+        }
+        
+        ProtectedRegion parentRegion = regionManager.getRegion(parentRegionName);
+        if (parentRegion == null) {
+            plugin.getLogger().warning("Parent region not found: " + parentRegionName);
+            return false;
+        }
+        
+        BlockVector3 point = BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return parentRegion.contains(point);
+    }
+    
+    /**
+     * 保護範囲内のチャンクリストを取得
+     */
+    private List<Chunk> getProtectedChunks(Location centerLocation, int range) {
+        List<Chunk> chunks = new ArrayList<>();
+        Chunk centerChunk = centerLocation.getChunk();
+        int halfRange = range / 2;
+        
+        for (int dx = -halfRange; dx <= halfRange; dx++) {
+            for (int dz = -halfRange; dz <= halfRange; dz++) {
+                int targetX = centerChunk.getX() + dx;
+                int targetZ = centerChunk.getZ() + dz;
+                chunks.add(centerChunk.getWorld().getChunkAt(targetX, targetZ));
+            }
+        }
+        
+        return chunks;
+    }
+    
+    private boolean createWorldGuardRegion(Player player, List<Chunk> chunks, ProtectionBlockType blockType) {
+        if (chunks.isEmpty()) {
+            return false;
+        }
+        
+        World world = chunks.get(0).getWorld();
         RegionManager regionManager = plugin.getRegionContainer().get(BukkitAdapter.adapt(world));
         if (regionManager == null) {
             plugin.getLogger().warning("ワールドのRegionManagerを取得できません: " + world.getName());
@@ -163,11 +236,23 @@ public class ProtectionManager {
         }
 
         String regionId = "onechunk_" + player.getUniqueId();
-
-        int minX = chunk.getX() * 16;
-        int minZ = chunk.getZ() * 16;
-        int maxX = minX + 15;
-        int maxZ = minZ + 15;
+        
+        // 範囲を計算
+        int minX = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE, maxZ = Integer.MIN_VALUE;
+        
+        for (Chunk chunk : chunks) {
+            int chunkMinX = chunk.getX() * 16;
+            int chunkMinZ = chunk.getZ() * 16;
+            int chunkMaxX = chunkMinX + 15;
+            int chunkMaxZ = chunkMinZ + 15;
+            
+            minX = Math.min(minX, chunkMinX);
+            minZ = Math.min(minZ, chunkMinZ);
+            maxX = Math.max(maxX, chunkMaxX);
+            maxZ = Math.max(maxZ, chunkMaxZ);
+        }
+        
         int minY = plugin.getConfigManager().getMinY();
         int maxY = plugin.getConfigManager().getMaxY();
 

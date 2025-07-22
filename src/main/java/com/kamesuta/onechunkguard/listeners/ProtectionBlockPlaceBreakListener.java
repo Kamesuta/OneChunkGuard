@@ -35,7 +35,7 @@ public class ProtectionBlockPlaceBreakListener implements Listener {
         }
 
         // 保護の作成を試みる
-        boolean success = plugin.getProtectionManager().createProtection(player, event.getBlock().getLocation());
+        boolean success = plugin.getProtectionManager().createProtection(player, event.getBlock().getLocation(), item);
 
         if (!success) {
             // 保護作成に失敗した場合はイベントをキャンセル

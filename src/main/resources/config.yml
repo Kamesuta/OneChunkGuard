@@ -1,11 +1,26 @@
-# 保護ブロックの設定
-protection-block:
-  material: END_STONE
-  display-name: "&6&l保護ブロック"
-  lore:
-    - "&7このブロックを設置すると"
-    - "&7チャンクが保護されます"
-    - "&c1人1チャンクまで！"
+# 保護ブロック種類の設定（複数定義可能）
+protection-blocks:
+  # デフォルトの保護ブロック
+  default:
+    material: END_STONE
+    display-name: "&6&l保護ブロック"
+    lore:
+      - "&7このブロックを設置すると"
+      - "&7チャンクが保護されます"
+      - "&c1人1チャンクまで！"
+    parent-region: ""  # 空文字の場合は制限なし
+    chunk-range: 1     # 保護するチャンクの範囲（1=1x1チャンク）
+  
+  # VIPプレイヤー用の保護ブロック（例）
+  vip:
+    material: DIAMOND_BLOCK
+    display-name: "&b&lVIP保護ブロック"
+    lore:
+      - "&7このブロックを設置すると"
+      - "&79チャンクが保護されます"
+      - "&c1人1種類まで！"
+    parent-region: "vip_area"
+    chunk-range: 3     # 保護するチャンクの範囲（3=3x3チャンク）
 
 # メッセージ設定
 messages:
@@ -37,6 +52,7 @@ messages:
   trust-list-entry: "&f- {player} {status}"
   trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
   protection-given: "&7ホットバー9番目に保護ブロックを配置しました！"
+  outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
 
 # 保護設定
 protection:
