@@ -9,6 +9,7 @@ protection-blocks:
       - "&7チャンクが保護されます"
       - "&c1人1チャンクまで！"
       - ""
+      - "&e設置したブロック右クリックで共同プレイヤーを設定"
       - "&e/unprotect &7- 保護を解除してブロック回収"
     parent-region: ""  # 空文字の場合は制限なし
     chunk-range: 1     # 保護するチャンクの範囲（1=1x1チャンク）
@@ -22,6 +23,7 @@ protection-blocks:
       - "&79チャンクが保護されます"
       - "&c1人1種類につき1個まで！"
       - ""
+      - "&e設置したブロック右クリックで共同プレイヤーを設定"
       - "&e/unprotect vip &7- VIP保護を解除してブロック回収"
     parent-region: "vip_area"
     chunk-range: 3     # 保護するチャンクの範囲（3=3x3チャンク）
@@ -56,7 +58,7 @@ messages:
   trust-list-header: "&6━━━━━ 信頼プレイヤー一覧 ━━━━━"
   trust-list-entry: "&f- {player} {status}"
   trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
-  protection-given: "&7ホットバー9番目に保護ブロックを配置しました！"
+  protection-given: "&7保護ブロックを受け取りました！保護ブロックを設置することで1x1チャンクを保護できます！"
   outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
   no-permission: "&c権限がありません！"
   unprotect-success-no-return: "&a保護を解除しました！（ブロックは返却されません）"
