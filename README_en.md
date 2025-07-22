@@ -9,6 +9,11 @@ Leveraging the WorldGuard API, it combines intuitive no-command operation with c
 
 ## 🚀 Why Choose OneChunkGuard?
 
+### 🎮 **Full Survival Mode Support**
+- ⚔️ **No OP Required** - Regular players can protect their land
+- 🏗️ **Survival or Creative** - Works in any game mode
+- 🎯 **Fair System** - Everyone can protect the same amount (1 chunk)
+
 ### ✨ **Simple Usability**
 - 🎯 **Easy Protection Without Commands** - Just place a block for instant protection
 - 🎁 **Automatic Distribution System** - Protection blocks automatically given to new players
@@ -64,8 +69,8 @@ Just place the protection block where you want to protect.
 
 **Right-click** the protection block to display an intuitive menu:
 - **[Add Member]** click → `/trust playername` auto-filled
-- **[Member List]** click → Shows trusted player list
 - **[Remove Member]** click → `/untrust playername` auto-filled
+- **[Member List]** click → Shows trusted player list
 
 ### 📱 **As Easy as a Smartphone**
 
