@@ -1,5 +1,9 @@
 # OneChunkGuard
 
+<div align="center">
+<img src="./assets/logo.png" alt="OneChunkGuard Logo" width="200">
+</div>
+
 [English](README_en.md) | 日本語
 
 > 🏆 **ブロック置くだけ1チャンク保護プラグイン** for Minecraft

@@ -1,5 +1,9 @@
 # OneChunkGuard
 
+<div align="center">
+<img src="./assets/logo.png" alt="OneChunkGuard Logo" width="200">
+</div>
+
 English | [日本語](README.md)
 
 > 🏆 **Just Place a Block - 1 Chunk Protection Plugin** for Minecraft
