@@ -183,8 +183,16 @@ If you find a bug or have a feature request, please let us know at [GitHub Issue
 
 This project is released under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+## 📊 Statistics
+
+This plugin uses [bStats](https://bstats.org/plugin/bukkit/OneChunkGuard/26619) to collect anonymous usage statistics.
+The statistics are collected anonymously and help improve the plugin.
+
+If you wish to disable statistics collection, you can do so in `plugins/bStats/config.yml`.
+
 ## 🙏 Acknowledgments
 
 - [WorldGuard](https://github.com/EngineHub/WorldGuard) - Foundation of the land protection system
 - [WorldEdit](https://github.com/EngineHub/WorldEdit) - WorldGuard dependency
 - [Spigot/Paper](https://papermc.io/) - Minecraft server platform
+- [bStats](https://bstats.org/) - Plugin usage statistics service

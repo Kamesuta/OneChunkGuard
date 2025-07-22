@@ -11,6 +11,7 @@ import com.kamesuta.onechunkguard.managers.DataManager;
 import com.kamesuta.onechunkguard.managers.ProtectionManager;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class OneChunkGuard extends JavaPlugin {
@@ -70,6 +71,10 @@ public class OneChunkGuard extends JavaPlugin {
         GiveProtectionBlockCommand giveCommand = new GiveProtectionBlockCommand(this);
         getCommand("giveprotectionblock").setExecutor(giveCommand);
         getCommand("giveprotectionblock").setTabCompleter(giveCommand);
+
+        // bStats初期化
+        int pluginId = 26619;
+        Metrics metrics = new Metrics(this, pluginId);
 
         getLogger().info("OneChunkGuard has been enabled!");
     }

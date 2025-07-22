@@ -50,3 +50,6 @@
     - [x] config.ymlもconfig_en.ymlとconfig_ja.ymlに分ける。config.ymlは言語だけ設定
 - [x] i18n漏れがあります。
 - [x] コンフィグにある、getMessageするだけの関数いらない気がする
+- [x] plugin.ymlを英語にする
+- [x] bstatsを設定する (ID: 26619)
+    - [x] READMEにbstatsのリンクを貼る、bStatsで統計を取っていることの明記

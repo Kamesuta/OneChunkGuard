@@ -3,30 +3,29 @@ version: '${project.version}'
 main: com.kamesuta.onechunkguard.OneChunkGuard
 api-version: '1.20'
 depend: [WorldGuard, WorldEdit]
-description: シンプルな1チャンク保護プラグイン
+description: Simple one-chunk protection plugin
 authors: [ Kamesuta ]
 
 permissions:
   onechunkguard.admin:
-    description: 管理者権限（他人の保護ブロックや頭を破壊できる）
+    description: Administrator permission (can destroy other players' protection blocks and heads)
     default: op
 
 commands:
   unprotect:
-    description: チャンクの保護を解除し、保護ブロックを返却
-    aliases: [up]
-    usage: /<command> [種類]
+    description: Remove chunk protection and return protection block
+    usage: /<command> [type]
   trust:
-    description: 保護されたチャンクにプレイヤーを追加
-    usage: /<command> <プレイヤー名>
+    description: Add player to protected chunk
+    usage: /<command> <player_name>
   untrust:
-    description: 保護されたチャンクからプレイヤーを削除
-    usage: /<command> <プレイヤー名>
+    description: Remove player from protected chunk
+    usage: /<command> <player_name>
   trustlist:
-    description: チャンク内のすべての信頼プレイヤーを一覧表示
+    description: List all trusted players in chunk
     usage: /<command>
   giveprotectionblock:
-    description: 管理者用：指定した保護ブロックを配布
+    description: "Admin: Give specified protection blocks"
     aliases: [gpb]
-    usage: /<command> <プレイヤー名> <種類> [数量]
+    usage: /<command> <player_name> <type> [amount]
     permission: onechunkguard.admin

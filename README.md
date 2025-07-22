@@ -183,8 +183,16 @@ mvn clean package
 
 このプロジェクトはMITライセンスの下で公開されています。詳細は[LICENSE](LICENSE)ファイルをご覧ください。
 
+## 📊 統計情報
+
+このプラグインは[bStats](https://bstats.org/plugin/bukkit/OneChunkGuard/26619)を使用してプラグインの使用統計を収集しています。
+統計は匿名で収集され、プラグインの改善に役立てられます。
+
+統計の無効化を希望する場合は、`plugins/bStats/config.yml`で設定できます。
+
 ## 🙏 謝辞
 
 - [WorldGuard](https://github.com/EngineHub/WorldGuard) - 土地保護システムの基盤
 - [WorldEdit](https://github.com/EngineHub/WorldEdit) - WorldGuardの依存関係
 - [Spigot/Paper](https://papermc.io/) - Minecraftサーバープラットフォーム
+- [bStats](https://bstats.org/) - プラグイン使用統計サービス
