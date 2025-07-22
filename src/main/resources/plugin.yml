@@ -15,7 +15,7 @@ commands:
   unprotect:
     description: チャンクの保護を解除し、保護ブロックを返却
     aliases: [up]
-    usage: /<command>
+    usage: /<command> [種類]
   trust:
     description: 保護されたチャンクにプレイヤーを追加
     usage: /<command> <プレイヤー名>
@@ -25,3 +25,8 @@ commands:
   trustlist:
     description: チャンク内のすべての信頼プレイヤーを一覧表示
     usage: /<command>
+  giveprotectionblock:
+    description: 管理者用：指定した保護ブロックを配布
+    aliases: [gpb]
+    usage: /<command> <プレイヤー名> <種類> [数量]
+    permission: onechunkguard.admin

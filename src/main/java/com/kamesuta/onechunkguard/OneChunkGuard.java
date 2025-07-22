@@ -1,5 +1,6 @@
 package com.kamesuta.onechunkguard;
 
+import com.kamesuta.onechunkguard.commands.GiveProtectionBlockCommand;
 import com.kamesuta.onechunkguard.commands.TrustCommand;
 import com.kamesuta.onechunkguard.commands.TrustListCommand;
 import com.kamesuta.onechunkguard.commands.UnprotectCommand;
@@ -53,12 +54,22 @@ public class OneChunkGuard extends JavaPlugin {
 
         // チャンクに入ったときにメッセージを出すリスナー
         getServer().getPluginManager().registerEvents(new ChunkEntryListener(this), this);
+        
+        // チャンクビジュアライザーリスナー
+        getServer().getPluginManager().registerEvents(new ChunkVisualizerListener(this), this);
 
         // コマンドの登録
-        getCommand("unprotect").setExecutor(new UnprotectCommand(this));
+        UnprotectCommand unprotectCommand = new UnprotectCommand(this);
+        getCommand("unprotect").setExecutor(unprotectCommand);
+        getCommand("unprotect").setTabCompleter(unprotectCommand);
         getCommand("trust").setExecutor(new TrustCommand(this));
         getCommand("untrust").setExecutor(new UntrustCommand(this));
         getCommand("trustlist").setExecutor(new TrustListCommand(this));
+        
+        // 管理者用コマンド
+        GiveProtectionBlockCommand giveCommand = new GiveProtectionBlockCommand(this);
+        getCommand("giveprotectionblock").setExecutor(giveCommand);
+        getCommand("giveprotectionblock").setTabCompleter(giveCommand);
 
         getLogger().info("OneChunkGuardが有効になりました！");
     }

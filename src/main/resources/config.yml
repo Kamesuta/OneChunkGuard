@@ -8,6 +8,8 @@ protection-blocks:
       - "&7このブロックを設置すると"
       - "&7チャンクが保護されます"
       - "&c1人1チャンクまで！"
+      - ""
+      - "&e/unprotect &7- 保護を解除してブロック回収"
     parent-region: ""  # 空文字の場合は制限なし
     chunk-range: 1     # 保護するチャンクの範囲（1=1x1チャンク）
   
@@ -18,7 +20,9 @@ protection-blocks:
     lore:
       - "&7このブロックを設置すると"
       - "&79チャンクが保護されます"
-      - "&c1人1種類まで！"
+      - "&c1人1種類につき1個まで！"
+      - ""
+      - "&e/unprotect vip &7- VIP保護を解除してブロック回収"
     parent-region: "vip_area"
     chunk-range: 3     # 保護するチャンクの範囲（3=3x3チャンク）
 
@@ -53,6 +57,7 @@ messages:
   trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
   protection-given: "&7ホットバー9番目に保護ブロックを配置しました！"
   outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
+  no-permission: "&c権限がありません！"
 
 # 保護設定
 protection:

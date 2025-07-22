@@ -23,10 +23,18 @@ public class InventoryUtils {
     }
 
     /**
-     * スロット8（ホットバー9番目）に保護ブロックを配置する
+     * スロット8（ホットバー9番目）にデフォルトの保護ブロックを配置する
      * 既存のアイテムがある場合はドロップする
      */
     public static void giveProtectionBlock(Player player) {
+        giveProtectionBlock(player, null);
+    }
+    
+    /**
+     * スロット8（ホットバー9番目）に指定種類の保護ブロックを配置する
+     * 既存のアイテムがある場合はドロップする
+     */
+    public static void giveProtectionBlock(Player player, String blockTypeId) {
         // 既存の保護ブロックを全て削除
         removeAllProtectionBlocks(player);
 
@@ -37,6 +45,12 @@ public class InventoryUtils {
         }
 
         // 保護ブロックを配置
-        player.getInventory().setItem(8, ItemUtils.createProtectionBlock());
+        ItemStack protectionBlock;
+        if (blockTypeId != null) {
+            protectionBlock = ItemUtils.createProtectionBlock(blockTypeId);
+        } else {
+            protectionBlock = ItemUtils.createProtectionBlock();
+        }
+        player.getInventory().setItem(8, protectionBlock);
     }
 }
