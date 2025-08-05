@@ -93,7 +93,16 @@ public class ConfigManager {
             String areaName = ChatColor.translateAlternateColorCodes('&', 
                 typeSection.getString("area-name", displayName));
             
-            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange, areaName);
+            // フラグを読み込み
+            Map<String, String> flags = new HashMap<>();
+            ConfigurationSection flagSection = typeSection.getConfigurationSection("flags");
+            if (flagSection != null) {
+                for (String flag : flagSection.getKeys(false)) {
+                    flags.put(flag, flagSection.getString(flag));
+                }
+            }
+            
+            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange, areaName, flags);
             protectionBlockTypes.put(typeId, type);
         }
         

@@ -59,6 +59,9 @@ public class OneChunkGuard extends JavaPlugin {
         // チャンクビジュアライザーリスナー
         getServer().getPluginManager().registerEvents(new ChunkVisualizerListener(this), this);
 
+        // 保護ブロックの物理的な移動（ピストンなど）を防ぐリスナー
+        getServer().getPluginManager().registerEvents(new ProtectionBlockPhysicsListener(this), this);
+
         // コマンドの登録
         UnprotectCommand unprotectCommand = new UnprotectCommand(this);
         getCommand("unprotect").setExecutor(unprotectCommand);

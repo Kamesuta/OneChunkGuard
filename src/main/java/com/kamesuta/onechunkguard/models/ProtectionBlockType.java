@@ -3,6 +3,7 @@ package com.kamesuta.onechunkguard.models;
 import org.bukkit.Material;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 保護ブロックの種類を表すモデルクラス
@@ -15,9 +16,10 @@ public class ProtectionBlockType {
     private final String parentRegion;
     private final int chunkRange;
     private final String areaName;
+    private final Map<String, String> flags;
 
     public ProtectionBlockType(String id, Material material, String displayName, 
-                              List<String> lore, String parentRegion, int chunkRange, String areaName) {
+                              List<String> lore, String parentRegion, int chunkRange, String areaName, Map<String, String> flags) {
         this.id = id;
         this.material = material;
         this.displayName = displayName;
@@ -25,6 +27,7 @@ public class ProtectionBlockType {
         this.parentRegion = parentRegion;
         this.chunkRange = chunkRange;
         this.areaName = areaName;
+        this.flags = flags;
     }
 
     public String getId() {
@@ -67,5 +70,9 @@ public class ProtectionBlockType {
      */
     public boolean isMultiChunk() {
         return chunkRange > 1;
+    }
+
+    public Map<String, String> getFlags() {
+        return flags;
     }
 }

@@ -16,6 +16,9 @@ protection-blocks:
       - "&e/unprotect &7- 保護を解除してブロック回収"
     parent-region: ""  # 空文字の場合は制限なし
     chunk-range: 1     # 保護するチャンクの範囲（1=1x1チャンク）
+    flags:            # WorldGuardフラグの設定（任意）
+      creeper-explosion: deny
+      tnt: deny
   
   # VIPプレイヤー用の保護ブロック（例）
   vip:
@@ -31,6 +34,9 @@ protection-blocks:
     parent-region: "vip_area"
     chunk-range: 3     # 保護するチャンクの範囲（3=3x3チャンク）
     area-name: "VIPエリア"  # エラーメッセージで表示される名前
+    flags:            # WorldGuardフラグの設定（任意）
+      creeper-explosion: deny
+      tnt: deny
 
 # 保護設定
 protection:

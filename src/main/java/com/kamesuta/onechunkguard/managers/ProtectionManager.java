@@ -9,19 +9,21 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.Flag;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ProtectionManager {
     private final OneChunkGuard plugin;
@@ -442,8 +444,40 @@ public class ProtectionManager {
         owners.addPlayer(player.getUniqueId());
         region.setOwners(owners);
 
-        // フラグを設定（所有者とメンバーは除外）
-        // FLAGSは設定しない - 所有者とメンバーが自由に使えるように
+        // カスタムフラグを設定
+        Map<String, String> flags = blockType.getFlags();
+        if (flags != null && !flags.isEmpty()) {
+            FlagRegistry flagRegistry = WorldGuard.getInstance().getFlagRegistry();
+            
+            for (Map.Entry<String, String> entry : flags.entrySet()) {
+                String flagName = entry.getKey();
+                String flagValue = entry.getValue();
+                
+                try {
+                    // fuzzyMatchFlagを使用してフラグを検索
+                    Flag<?> flag = Flags.fuzzyMatchFlag(flagRegistry, flagName);
+                    
+                    if (flag == null) {
+                        plugin.getLogger().warning("Unknown flag: " + flagName);
+                        continue;
+                    }
+                    
+                    // StateFlagかどうかチェック
+                    if (!(flag instanceof StateFlag stateFlag)) {
+                        plugin.getLogger().warning("Flag '" + flagName + "' is not a StateFlag. Only StateFlags are supported.");
+                        continue;
+                    }
+
+                    StateFlag.State state = StateFlag.State.valueOf(flagValue.toUpperCase());
+                    region.setFlag(stateFlag, state);
+                    
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Invalid flag value for " + flagName + ": " + flagValue + " (expected: allow/deny)");
+                } catch (Exception e) {
+                    plugin.getLogger().warning("Failed to set flag " + flagName + " to " + flagValue + ": " + e.getMessage());
+                }
+            }
+        }
 
         regionManager.addRegion(region);
 
