@@ -77,10 +77,14 @@ public class ProtectionBlockInventoryListener implements Listener {
         event.getDrops().removeIf(this::isDefaultProtectionBlock);
 
         // 死亡後のリスポーン時にdefaultタイプの保護ブロックを再配置
+        // ただし、既に保護しているチャンクがない場合のみ
         Player player = event.getEntity();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline()) {
-                InventoryUtils.giveProtectionBlock(player, "default");
+                // defaultタイプの保護が存在しない場合のみ保護ブロックを再配置
+                if (plugin.getDataManager().getPlayerProtection(player.getUniqueId(), "default") == null) {
+                    InventoryUtils.giveProtectionBlock(player, "default");
+                }
             }
         }, 5L); // 5ティック後に実行
     }
