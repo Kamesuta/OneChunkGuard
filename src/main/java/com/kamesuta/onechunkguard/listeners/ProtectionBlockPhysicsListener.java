@@ -12,6 +12,7 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 
 /**
  * 保護ブロックの物理的な移動（ピストンなど）と爆発から保護するリスナー
@@ -67,6 +68,23 @@ public class ProtectionBlockPhysicsListener implements Listener {
 
         Location belowLocation = block.getLocation().clone().add(0, -1, 0);
         return isProtectionBlock(belowLocation);
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onBlockFromTo(BlockFromToEvent event) {
+        // 水や溶岩が流れ込む先のブロックをチェック
+        Block toBlock = event.getToBlock();
+        
+        // 保護ブロックの頭に水や溶岩が流れ込むのを防ぐ
+        if (isProtectionHead(toBlock)) {
+            event.setCancelled(true);
+            return;
+        }
+        
+        // 保護ブロック自体に水や溶岩が流れ込むのも防ぐ
+        if (isProtectionBlock(toBlock.getLocation())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
