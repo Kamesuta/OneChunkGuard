@@ -4,8 +4,13 @@
       "Bash(mkdir:*)",
       "Bash(touch:*)",
       "Bash(mvn clean:*)",
-      "Bash(mvn:*)"
+      "Bash(mvn:*)",
+      "mcp__serena"
     ],
     "deny": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "serena"
+  ]
 }
