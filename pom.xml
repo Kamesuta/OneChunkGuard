@@ -6,14 +6,14 @@
 
   <groupId>com.kamesuta</groupId>
   <artifactId>onechunkguard</artifactId>
-  <version>1.8-SNAPSHOT</version>
+  <version>1.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>OneChunkGuard</name>
   <description>Simple one-chunk protection plugin for Minecraft</description>
 
   <properties>
-    <java.version>21</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,9 +25,15 @@ import java.util.UUID;
 public class ChunkVisualizerListener implements Listener {
     private final OneChunkGuard plugin;
     private final Map<UUID, BukkitRunnable> activeVisualizers = new HashMap<>();
+    private final Particle happyVillagerParticle;
 
     public ChunkVisualizerListener(OneChunkGuard plugin) {
         this.plugin = plugin;
+
+        // パーティクルを取得
+        happyVillagerParticle = Arrays.stream(Particle.values())
+                .filter(p -> p.name().equals("HAPPY_VILLAGER") || p.name().equals("VILLAGER_HAPPY"))
+                .findFirst().orElse(null);
     }
 
     @EventHandler
@@ -171,15 +178,19 @@ public class ChunkVisualizerListener implements Listener {
      * パーティクルを表示
      */
     private void spawnParticle(Player player, double x, double y, double z) {
-        Location loc = new Location(player.getWorld(), x + 0.5, y + 0.5, z + 0.5);
-        player.spawnParticle(Particle.HAPPY_VILLAGER, loc, 1, 0, 0, 0, 0);
+        if (happyVillagerParticle != null) {
+            Location loc = new Location(player.getWorld(), x + 0.5, y + 0.5, z + 0.5);
+            player.spawnParticle(happyVillagerParticle, loc, 1, 0, 0, 0, 0);
+        }
     }
 
     /**
      * 角のパーティクルを表示（少し目立つように）
      */
     private void spawnCornerParticle(Player player, double x, double y, double z) {
-        Location loc = new Location(player.getWorld(), x + 0.5, y + 0.5, z + 0.5);
-        player.spawnParticle(Particle.HAPPY_VILLAGER, loc, 3, 0.2, 0.2, 0.2, 0);
+        if (happyVillagerParticle != null) {
+            Location loc = new Location(player.getWorld(), x + 0.5, y + 0.5, z + 0.5);
+            player.spawnParticle(happyVillagerParticle, loc, 3, 0.2, 0.2, 0.2, 0);
+        }
     }
 }
