@@ -63,4 +63,4 @@
     - [x] 頭に直接水を置くと壊れるので、壊れないようにする
 - [x] adminは他の人の保護を撤去できるようにする
 - [x] /force_unprotect <プレイヤー名> [default] で強制解除できるようにする (adminのみ)
-- [ ] onechunkguard.use 権限を追加する (default: true)
+- [x] onechunkguard.use 権限を追加する (default: true)

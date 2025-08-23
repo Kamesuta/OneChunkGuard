@@ -42,6 +42,13 @@ public class ProtectionBlockPlaceBreakListener implements Listener {
             return;
         }
 
+        // 使用権限チェック
+        if (!player.hasPermission("onechunkguard.use")) {
+            player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
+            event.setCancelled(true);
+            return;
+        }
+
         // 保護の作成を試みる
         boolean success = plugin.getProtectionManager().createProtection(player, event.getBlock().getLocation(), item);
 
@@ -67,6 +74,13 @@ public class ProtectionBlockPlaceBreakListener implements Listener {
         if (protection != null && protection.getProtectionBlockLocation().equals(blockLocation)) {
             // これは保護ブロック
             boolean isOwner = protection.getOwner().equals(player.getUniqueId());
+
+            // 利用権限チェック（管理者はバイパス）。所有者であっても use 権限が無ければ破壊不可
+            if (!player.hasPermission("onechunkguard.use") && !player.hasPermission("onechunkguard.admin")) {
+                player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
+                event.setCancelled(true);
+                return;
+            }
 
             if (!plugin.getProtectionManager().canBreakProtectionBlock(player, blockLocation)) {
                 // 他の人の保護ブロックか確認

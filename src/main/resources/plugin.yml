@@ -10,20 +10,27 @@ permissions:
   onechunkguard.admin:
     description: Administrator permission (can destroy other players' protection blocks and heads)
     default: op
+  onechunkguard.use:
+    description: Allow using OneChunkGuard features (place protection blocks)
+    default: true
 
 commands:
   unprotect:
     description: Remove chunk protection and return protection block
     usage: /<command> [type]
+    permission: onechunkguard.use
   trust:
     description: Add player to protected chunk
     usage: /<command> <player_name>
+    permission: onechunkguard.use
   untrust:
     description: Remove player from protected chunk
     usage: /<command> <player_name>
+    permission: onechunkguard.use
   trustlist:
     description: List all trusted players in chunk
     usage: /<command>
+    permission: onechunkguard.use
   giveprotectionblock:
     description: "Admin: Give specified protection blocks"
     aliases: [gpb]

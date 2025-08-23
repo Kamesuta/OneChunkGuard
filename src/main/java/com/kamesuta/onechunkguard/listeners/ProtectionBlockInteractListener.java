@@ -53,7 +53,15 @@ public class ProtectionBlockInteractListener implements Listener {
         if (protection != null && protection.getProtectionBlockLocation().equals(blockLocation)) {
             // これは保護ブロック
             if (!protection.getOwner().equals(player.getUniqueId())) {
-                // 所有者ではないのでUIを表示しない
+                player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
+                event.setCancelled(true);
+                return;
+            }
+
+            // 利用権限チェック（管理者はバイパス）
+            if (!player.hasPermission("onechunkguard.use") && !player.hasPermission("onechunkguard.admin")) {
+                player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
+                event.setCancelled(true);
                 return;
             }
 
