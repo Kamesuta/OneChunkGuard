@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,10 @@ public class ProtectionBlockInteractListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        // オフハンドは無視
+        if (event.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
             return;
         }
