@@ -29,3 +29,7 @@ commands:
     aliases: [gpb]
     usage: /<command> <player_name> <type> [amount]
     permission: onechunkguard.admin
+  force_unprotect:
+    description: "Admin: Force remove another player's protection"
+    usage: /<command> <player> [type]
+    permission: onechunkguard.admin

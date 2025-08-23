@@ -552,4 +552,35 @@ public class ProtectionManager {
             }
         }
     }
+
+    /**
+     * 指定したプレイヤーと種別の保護を返却なしで強制的に削除します。
+     * 管理者操作や内部用途（管理者による破壊、/force_unprotect など）を想定しています。
+     * 保護が存在して削除された場合は true を返します。
+     */
+    public boolean forceRemoveProtection(UUID ownerId, String blockTypeId) {
+        DataManager dataManager = plugin.getDataManager();
+        ProtectionData protection = dataManager.getPlayerProtection(ownerId, blockTypeId);
+        if (protection == null) {
+            return false;
+        }
+
+        // WorldGuard の領域を削除
+        removeWorldGuardRegion(ownerId, protection.getWorldName(), protection.getProtectionBlockTypeId());
+
+        // 記録されている位置にブロック/ヘッドがあれば削除
+        Location blockLoc = protection.getProtectionBlockLocation();
+        if (blockLoc.getWorld() != null) {
+            Block block = blockLoc.getBlock();
+            block.setType(Material.AIR);
+            Block above = blockLoc.clone().add(0, 1, 0).getBlock();
+            if (above.getType() == Material.PLAYER_HEAD || above.getType() == Material.PLAYER_WALL_HEAD) {
+                above.setType(Material.AIR);
+            }
+        }
+
+        // データから削除（返却なし）
+        dataManager.removeProtection(ownerId, blockTypeId);
+        return true;
+    }
 }

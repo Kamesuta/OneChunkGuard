@@ -14,6 +14,8 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.kamesuta.onechunkguard.commands.ForceUnprotectCommand;
+
 public class OneChunkGuard extends JavaPlugin {
     private static OneChunkGuard instance;
     private ConfigManager configManager;
@@ -74,6 +76,11 @@ public class OneChunkGuard extends JavaPlugin {
         GiveProtectionBlockCommand giveCommand = new GiveProtectionBlockCommand(this);
         getCommand("giveprotectionblock").setExecutor(giveCommand);
         getCommand("giveprotectionblock").setTabCompleter(giveCommand);
+
+        // 管理者用 強制解除コマンド
+        ForceUnprotectCommand forceUnprotectCommand = new ForceUnprotectCommand(this);
+        getCommand("force_unprotect").setExecutor(forceUnprotectCommand);
+        getCommand("force_unprotect").setTabCompleter(forceUnprotectCommand);
 
         // bStats初期化
         int pluginId = 26619;

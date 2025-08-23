@@ -66,9 +66,11 @@ public class ProtectionBlockPlaceBreakListener implements Listener {
 
         if (protection != null && protection.getProtectionBlockLocation().equals(blockLocation)) {
             // これは保護ブロック
+            boolean isOwner = protection.getOwner().equals(player.getUniqueId());
+
             if (!plugin.getProtectionManager().canBreakProtectionBlock(player, blockLocation)) {
                 // 他の人の保護ブロックか確認
-                if (!protection.getOwner().equals(player.getUniqueId())) {
+                if (!isOwner) {
                     player.sendMessage(plugin.getConfigManager().getMessage("cannot-break-others"));
                 } else {
                     player.sendMessage(plugin.getConfigManager().getMessage("cannot-break"));
@@ -77,11 +79,27 @@ public class ProtectionBlockPlaceBreakListener implements Listener {
                 return;
             }
 
-            // 保護を解除（ブロック破壊からの呼び出しなのでtrue）
-            plugin.getProtectionManager().removeProtection(player, true, true);
+            // 所有者自身が破壊 -> 既存処理
+            if (isOwner) {
+                plugin.getProtectionManager().removeProtection(player, true, true);
+                // デフォルトのブロック破壊をキャンセルし手動で処理
+                event.setCancelled(true);
+                return;
+            }
 
-            // デフォルトのブロック破壊をキャンセルして手動で処理
+            // 管理者が他人の保護を破壊 -> 強制解除（返却なし）
+            if (player.hasPermission("onechunkguard.admin")) {
+                boolean removed = plugin.getProtectionManager().forceRemoveProtection(protection.getOwner(), protection.getProtectionBlockTypeId());
+                if (removed) {
+                    player.sendMessage(plugin.getConfigManager().getMessage("protection-removed"));
+                }
+                event.setCancelled(true);
+                return;
+            }
+
+            // 念のため取消
             event.setCancelled(true);
+            return;
         }
 
         // 保護ブロックの上のプレイヤーヘッドもチェック
