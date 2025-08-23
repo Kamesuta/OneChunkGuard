@@ -58,7 +58,13 @@ public class ProtectionBlockInteractListener implements Listener {
         if (protection != null && protection.getProtectionBlockLocation().equals(blockLocation)) {
             // これは保護ブロック
             if (!protection.getOwner().equals(player.getUniqueId())) {
-                player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
+                UUID ownerId = protection.getOwner();
+                // To get the player's name, it is better to use the Bukkit API, which can also get the name of offline players.
+                String ownerName = plugin.getServer().getOfflinePlayer(ownerId).getName();
+                // Get the message from the configuration and replace the placeholder.
+                String message = plugin.getConfigManager().getMessage("no-permission-owner")
+                        .replace("{player}", ownerName != null ? ownerName : plugin.getConfigManager().getMessage("unknown-player"));
+                player.sendMessage(message);
                 event.setCancelled(true);
                 return;
             }

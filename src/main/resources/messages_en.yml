@@ -40,6 +40,7 @@ trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
 protection-given: "&7You received a protection block! Place it to protect a 1x1 chunk!"
 outside-parent-region: "&cThis protection block can only be placed within {region}!"
 no-permission: "&cYou don't have permission!"
+no-permission-owner: "&cThis chunk is protected by {player}."
 unprotect-success-no-return: "&aProtection removed! (Block not returned)"
 
 # Admin Command Related

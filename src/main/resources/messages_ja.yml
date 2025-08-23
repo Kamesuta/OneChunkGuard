@@ -40,6 +40,7 @@ trust-list-footer: "&6━━━━━━━━━━━━━━━━━━━"
 protection-given: "&7保護ブロックを受け取りました！保護ブロックを設置することで1x1チャンクを保護できます！"
 outside-parent-region: "&cこの保護ブロックは{region}内でのみ設置できます！"
 no-permission: "&c権限がありません！"
+no-permission-owner: "&cこのチャンクは {player} によって保護されています。"
 unprotect-success-no-return: "&a保護を解除しました！（ブロックは返却されません）"
 
 # 管理者コマンド関連
