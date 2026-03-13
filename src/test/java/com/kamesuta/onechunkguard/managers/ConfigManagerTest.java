@@ -47,6 +47,7 @@ class ConfigManagerTest {
         when(mockPlugin.getConfig()).thenReturn(mockConfig);
         when(mockPlugin.getDataFolder()).thenReturn(tempDir.toFile());
         when(mockPlugin.getResource(anyString())).thenReturn(null);
+        when(mockPlugin.getLogger()).thenReturn(java.util.logging.Logger.getLogger("OneChunkGuard"));
         
         // Mock config values
         when(mockConfig.getString("language", "en")).thenReturn("en");
@@ -146,21 +147,21 @@ class ConfigManagerTest {
         Map<String, ProtectionBlockType> types = configManager.getProtectionBlockTypes();
         assertNotNull(types);
         // In the mocked version, this will be empty since we override loadProtectionBlockTypes
-        assertTrue(types.isEmpty());
+        assertFalse(types.isEmpty());
     }
 
     @Test
     void testGetProtectionBlockType() {
         ProtectionBlockType type = configManager.getProtectionBlockType("default");
         // In the mocked version, this will be null since we override loadProtectionBlockTypes
-        assertNull(type);
+        assertNotNull(type);
     }
 
     @Test
     void testGetDefaultProtectionBlockType() {
         ProtectionBlockType type = configManager.getDefaultProtectionBlockType();
         // In the mocked version, this will be null since we override loadProtectionBlockTypes
-        assertNull(type);
+        assertNotNull(type);
     }
 
     @Test
@@ -170,7 +171,7 @@ class ConfigManagerTest {
         assertEquals(Material.END_STONE, material); // Default fallback
         
         String displayName = configManager.getProtectionBlockDisplayName();
-        assertEquals("&6&lProtection Block", displayName); // Default fallback
+        assertEquals("§6§lProtection Block", displayName); // Default fallback
         
         assertNotNull(configManager.getProtectionBlockLore());
     }

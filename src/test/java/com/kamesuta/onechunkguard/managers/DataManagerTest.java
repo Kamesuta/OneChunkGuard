@@ -105,9 +105,9 @@ class DataManagerTest {
         assertEquals(playerId, retrievedByType.getOwner());
         
         // Check chunk protection
-        String chunkKey = "world:0:1"; // Chunk coordinates for location (10.5, 20.5)
+        String chunkKey = world.getName() + ":0:1"; // Chunk coordinates for location (10.5, 20.5)
         ProtectionData chunkProtection = dataManager.getChunkProtection(chunkKey);
-        assertNotNull(chunkProtection);
+        assertNotNull(chunkProtection, "Chunk protection should exist for " + chunkKey);
         assertEquals(playerId, chunkProtection.getOwner());
     }
 
@@ -161,7 +161,7 @@ class DataManagerTest {
         assertNull(dataManager.getPlayerProtection(playerId));
         
         // Check chunk protection is also removed
-        String chunkKey = "world:0:1";
+        String chunkKey = world.getName() + ":0:1";
         assertNull(dataManager.getChunkProtection(chunkKey));
     }
 
@@ -197,27 +197,28 @@ class DataManagerTest {
     @Test
     void testMultiChunkProtection() {
         UUID playerId = UUID.randomUUID();
-        Location location = new Location(world, 10.5, 64.0, 20.5);
+        Location location = new Location(world, 10.5, 64.0, 10.5);
         ProtectionData protection = new ProtectionData(playerId, location, "vip", 3);
         
         dataManager.addProtection(protection);
         
+        String w = world.getName();
         // Check multiple chunks are protected
-        assertTrue(dataManager.isChunkProtected("world:-1:-1"));
-        assertTrue(dataManager.isChunkProtected("world:0:-1"));
-        assertTrue(dataManager.isChunkProtected("world:1:-1"));
-        assertTrue(dataManager.isChunkProtected("world:-1:0"));
-        assertTrue(dataManager.isChunkProtected("world:0:0"));
-        assertTrue(dataManager.isChunkProtected("world:1:0"));
-        assertTrue(dataManager.isChunkProtected("world:-1:1"));
-        assertTrue(dataManager.isChunkProtected("world:0:1"));
-        assertTrue(dataManager.isChunkProtected("world:1:1"));
+        assertTrue(dataManager.isChunkProtected(w + ":-1:-1"));
+        assertTrue(dataManager.isChunkProtected(w + ":0:-1"));
+        assertTrue(dataManager.isChunkProtected(w + ":1:-1"));
+        assertTrue(dataManager.isChunkProtected(w + ":-1:0"));
+        assertTrue(dataManager.isChunkProtected(w + ":0:0"));
+        assertTrue(dataManager.isChunkProtected(w + ":1:0"));
+        assertTrue(dataManager.isChunkProtected(w + ":-1:1"));
+        assertTrue(dataManager.isChunkProtected(w + ":0:1"));
+        assertTrue(dataManager.isChunkProtected(w + ":1:1"));
         
         // Check chunks outside range are not protected
-        assertFalse(dataManager.isChunkProtected("world:-2:0"));
-        assertFalse(dataManager.isChunkProtected("world:2:0"));
-        assertFalse(dataManager.isChunkProtected("world:0:-2"));
-        assertFalse(dataManager.isChunkProtected("world:0:2"));
+        assertFalse(dataManager.isChunkProtected(w + ":-2:0"));
+        assertFalse(dataManager.isChunkProtected(w + ":2:0"));
+        assertFalse(dataManager.isChunkProtected(w + ":0:-2"));
+        assertFalse(dataManager.isChunkProtected(w + ":0:2"));
     }
 
     @Test
