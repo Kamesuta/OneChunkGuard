@@ -3,11 +3,13 @@ package com.kamesuta.onechunkguard.managers;
 import com.kamesuta.onechunkguard.OneChunkGuard;
 import com.kamesuta.onechunkguard.models.ProtectionBlockType;
 import com.kamesuta.onechunkguard.models.ProtectionData;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -15,19 +17,19 @@ import java.util.*;
 
 /**
  * 保護チャンクの時間制限を管理するマネージャー
- * - 残り時間のアクションバー表示
  * - 補充アイテムの消費と時間延長
- * - 期限切れ保護の自動解除
+ * - 期限切れ保護の自動解除、およびグローバルアナウンス
+ * - ブロック上の残り時間ホログラム（TextDisplay）
  */
 public class TimeLimitManager {
 
     private final OneChunkGuard plugin;
-    /** アクションバー更新・期限切れチェック用タスク */
+    /** ホログラム更新・期限切れチェック用タスク */
     private BukkitTask tickTask;
-    /** プレイヤーが現在いるチャンクの保護データ（アクションバー用） */
-    private final Map<UUID, ProtectionData> playerCurrentChunk = new HashMap<>();
     /** 各保護の補充カウント（コスト計算用）: "playerUUID:typeId" -> 補充済み回数 */
     private final Map<String, Integer> refillCounts = new HashMap<>();
+    /** アクティブな保護のホログラム（TextDisplay）キャッシュ */
+    private final Map<String, TextDisplay> holograms = new HashMap<>();
 
     public TimeLimitManager(OneChunkGuard plugin) {
         this.plugin = plugin;
@@ -37,7 +39,7 @@ public class TimeLimitManager {
      * タスクを開始する（onEnable時に呼ぶ）
      */
     public void start() {
-        // 1秒ごとにアクションバー更新と期限切れチェック
+        // 1秒ごとにホログラム更新と期限切れチェック
         tickTask = Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20L, 20L);
     }
 
@@ -49,55 +51,31 @@ public class TimeLimitManager {
             tickTask.cancel();
             tickTask = null;
         }
-    }
-
-    /**
-     * プレイヤーが現在いるチャンクを更新する（ChunkEntryListenerから呼ぶ）
-     */
-    public void updatePlayerChunk(UUID playerId, ProtectionData protection) {
-        if (protection == null) {
-            playerCurrentChunk.remove(playerId);
-        } else {
-            playerCurrentChunk.put(playerId, protection);
+        for (TextDisplay display : holograms.values()) {
+            if (display.isValid()) {
+                display.remove();
+            }
         }
+        holograms.clear();
     }
 
     /**
-     * プレイヤーが退出したときにクリア
-     */
-    public void removePlayer(UUID playerId) {
-        playerCurrentChunk.remove(playerId);
-    }
-
-    /**
-     * 毎秒の処理: アクションバー表示 + 期限切れチェック
+     * 毎秒の処理: ホログラム表示更新 + 期限切れチェック
      */
     private void tick() {
-        // アクションバーに残り時間表示
-        for (Map.Entry<UUID, ProtectionData> entry : new HashMap<>(playerCurrentChunk).entrySet()) {
-            Player player = Bukkit.getPlayer(entry.getKey());
-            if (player == null || !player.isOnline()) {
-                playerCurrentChunk.remove(entry.getKey());
-                continue;
-            }
-
-            ProtectionData data = entry.getValue();
-            ProtectionBlockType type = plugin.getConfigManager().getProtectionBlockType(data.getProtectionBlockTypeId());
-            if (type == null || !type.hasTimeLimit()) continue;
-
-            // 残り時間を取得してアクションバーに表示
-            String msg = buildActionBarMessage(data, type, player);
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(msg));
-        }
-
-        // 期限切れ保護をチェックして自動解除
         List<ProtectionData> expired = new ArrayList<>();
+
         for (ProtectionData data : plugin.getDataManager().getAllProtections()) {
             ProtectionBlockType type = plugin.getConfigManager().getProtectionBlockType(data.getProtectionBlockTypeId());
             if (type == null || !type.hasTimeLimit()) continue;
+
             if (data.isExpired()) {
                 expired.add(data);
+                continue;
             }
+
+            // ホログラムを更新
+            updateHologram(data, type);
         }
 
         for (ProtectionData data : expired) {
@@ -106,28 +84,39 @@ public class TimeLimitManager {
     }
 
     /**
-     * アクションバーに表示するメッセージを生成する
+     * ホログラム（TextDisplay）の状態を更新する
      */
-    private String buildActionBarMessage(ProtectionData data, ProtectionBlockType type, Player viewer) {
-        long remaining = data.getRemainingSeconds();
-        String timeStr = formatTime(remaining);
+    private void updateHologram(ProtectionData data, ProtectionBlockType type) {
+        String key = data.getOwner().toString() + ":" + data.getProtectionBlockTypeId();
+        TextDisplay display = holograms.get(key);
 
-        // 所有者名
-        String ownerName = Bukkit.getOfflinePlayer(data.getOwner()).getName();
-        if (ownerName == null) {
-            ownerName = plugin.getConfigManager().getMessage("unknown-player");
+        Location loc = data.getProtectionBlockLocation();
+        World world = loc.getWorld();
+
+        // チャンクがアンロードされている場合はホログラムを消しておく
+        if (world == null || !world.isChunkLoaded(loc.getBlockX() >> 4, loc.getBlockZ() >> 4)) {
+            if (display != null) {
+                if (display.isValid()) display.remove();
+                holograms.remove(key);
+            }
+            return;
         }
 
-        boolean isOwner = viewer.getUniqueId().equals(data.getOwner());
-        if (isOwner) {
-            // 所有者向け: 残り時間を強調
-            return plugin.getConfigManager().getMessage("timelimit-actionbar-owner",
-                    "{time}", timeStr);
-        } else {
-            // 訪問者向け: 所有者名と残り時間
-            return plugin.getConfigManager().getMessage("timelimit-actionbar-visitor",
-                    "{owner}", ownerName, "{time}", timeStr);
+        // Entityが存在しないか無効な場合は再生成
+        if (display == null || !display.isValid()) {
+            Location spawnLoc = loc.clone().add(0.5, 2.0, 0.5);
+            display = world.spawn(spawnLoc, TextDisplay.class, entity -> {
+                entity.setPersistent(false);
+                entity.setBillboard(Display.Billboard.CENTER);
+                entity.setAlignment(TextDisplay.TextAlignment.CENTER);
+            });
+            holograms.put(key, display);
         }
+
+        String timeStr = formatTime(data.getRemainingSeconds());
+        String text = plugin.getConfigManager().getMessage("timelimit-hologram", "{time}", timeStr);
+        String coloredText = org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
+        display.setText(coloredText);
     }
 
     /**
@@ -212,6 +201,21 @@ public class TimeLimitManager {
      */
     private void forceExpireProtection(ProtectionData data) {
         plugin.getLogger().info("Protection expired for " + data.getOwner() + " (type: " + data.getProtectionBlockTypeId() + ")");
+
+        Location loc = data.getProtectionBlockLocation();
+        String ownerName = Bukkit.getOfflinePlayer(data.getOwner()).getName();
+        if (ownerName == null) ownerName = plugin.getConfigManager().getMessage("unknown-player");
+
+        String globalMessage = plugin.getConfigManager().getMessage(
+                "timelimit-global-expired",
+                "{owner}", ownerName,
+                "{x}", String.valueOf(loc.getBlockX()),
+                "{y}", String.valueOf(loc.getBlockY()),
+                "{z}", String.valueOf(loc.getBlockZ())
+        );
+
+        Bukkit.broadcastMessage(globalMessage);
+
         plugin.getProtectionManager().forceRemoveProtection(data.getOwner(), data.getProtectionBlockTypeId());
 
         // 所有者がオンラインの場合メッセージ送信
@@ -219,23 +223,23 @@ public class TimeLimitManager {
         if (owner != null && owner.isOnline()) {
             owner.sendMessage(plugin.getConfigManager().getMessage("timelimit-expired"));
         }
-
-        // 補充カウントをクリア
-        String key = data.getOwner().toString() + ":" + data.getProtectionBlockTypeId();
-        refillCounts.remove(key);
     }
 
     /**
-     * 保護を削除した際に補充カウントをリセット
+     * 保護を削除した際にカウントとホログラムをリセット
      */
     public void onProtectionRemoved(UUID ownerId, String blockTypeId) {
         String key = ownerId.toString() + ":" + blockTypeId;
         refillCounts.remove(key);
+
+        TextDisplay display = holograms.remove(key);
+        if (display != null && display.isValid()) {
+            display.remove();
+        }
     }
 
     /**
      * 指定された時間（秒）を読みやすい形式にフォーマットする
-     * 例: 3661 -> "1時間1分1秒" (ja) / "1h1m1s" (en)
      */
     private String formatTime(long seconds) {
         if (seconds <= 0) return "0" + plugin.getConfigManager().getMessage("timelimit-unit-second");

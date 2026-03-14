@@ -64,10 +64,10 @@ offline-status: "&7オフライン"
 unknown-player: "不明なプレイヤー"
 
 # 時間制限
-timelimit-actionbar-owner: "&e保護残り時間: &a{time}"
-timelimit-actionbar-visitor: "&7{owner} の保護: 残り&a{time}"
+timelimit-hologram: "&e&l保護残り時間\n&a{time}"
 timelimit-refill-success: "&a保護時間を &e{time}&a 延長しました！残り: &e{remaining}&a。さらに延長するには&e{next_cost}個作成してください&a。"
 timelimit-expired: "&c時間切れになり、チャンクの保護が解除されました！"
+timelimit-global-expired: "&b[OneChunkGuard] &e{owner} &aの保護区 ({x}, {y}, {z}) が期限切れになりました！アイテムGETのチャンス！"
 timelimit-unit-hour: "時間"
 timelimit-unit-minute: "分"
 timelimit-unit-second: "秒"

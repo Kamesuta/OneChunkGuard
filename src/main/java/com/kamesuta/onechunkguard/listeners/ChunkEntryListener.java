@@ -1,7 +1,6 @@
 package com.kamesuta.onechunkguard.listeners;
 
 import com.kamesuta.onechunkguard.OneChunkGuard;
-import com.kamesuta.onechunkguard.models.ProtectionBlockType;
 import com.kamesuta.onechunkguard.models.ProtectionData;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -56,30 +55,17 @@ public class ChunkEntryListener implements Listener {
         // このチャンクが保護されているかチェック
         ProtectionData protection = plugin.getDataManager().getChunkProtection(chunkKey);
 
-        // TimeLimitManagerにプレイヤーの現在チャンクを通知（時間制限アクションバー用）
-        plugin.getTimeLimitManager().updatePlayerChunk(player.getUniqueId(), protection);
-
         if (protection != null) {
-            // 時間制限がある場合はTimeLimitManagerがアクションバーを担当する
-            // 時間制限がない場合のみここで所有者名を表示する
-            ProtectionBlockType type = plugin.getConfigManager()
-                    .getProtectionBlockType(protection.getProtectionBlockTypeId());
-            boolean hasTimeLimit = (type != null && type.hasTimeLimit());
+            String ownerName = Bukkit.getOfflinePlayer(protection.getOwner()).getName();
+            if (ownerName == null) ownerName = plugin.getConfigManager().getMessage("unknown-player");
 
-            if (!hasTimeLimit) {
-                String ownerName = Bukkit.getOfflinePlayer(protection.getOwner()).getName();
-                if (ownerName == null) ownerName = plugin.getConfigManager().getMessage("unknown-player");
-
-                String message = plugin.getConfigManager().getMessage("owner-info", "{owner}", ownerName);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
-            }
+            String message = plugin.getConfigManager().getMessage("owner-info", "{owner}", ownerName);
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // プレイヤーがサーバーを離れたらTimeLimitManagerから削除
-        plugin.getTimeLimitManager().removePlayer(event.getPlayer().getUniqueId());
         lastChunkKey.remove(event.getPlayer().getUniqueId());
     }
 }
