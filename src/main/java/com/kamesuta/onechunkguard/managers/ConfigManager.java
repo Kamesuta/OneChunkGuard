@@ -101,8 +101,30 @@ public class ConfigManager {
                     flags.put(flag, flagSection.getString(flag));
                 }
             }
+
+            // 時間制限関連設定を読み込み
+            long initialDurationSeconds = typeSection.getLong("time-limit.initial-duration-seconds", 0L);
+            double costMultiplier = typeSection.getDouble("time-limit.cost-multiplier", 2.0);
+
+            // 補充アイテムを読み込み
+            Map<Material, Long> refillItems = new HashMap<>();
+            ConfigurationSection refillSection = typeSection.getConfigurationSection("time-limit.refill-items");
+            if (refillSection != null) {
+                for (String refillMatName : refillSection.getKeys(false)) {
+                    try {
+                        Material refillMat = Material.valueOf(refillMatName.toUpperCase());
+                        long seconds = refillSection.getLong(refillMatName, 0L);
+                        if (seconds > 0) {
+                            refillItems.put(refillMat, seconds);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        plugin.getLogger().warning("Invalid refill item material: " + refillMatName);
+                    }
+                }
+            }
             
-            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange, areaName, flags);
+            ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange, areaName, flags,
+                    initialDurationSeconds, costMultiplier, refillItems);
             protectionBlockTypes.put(typeId, type);
         }
         

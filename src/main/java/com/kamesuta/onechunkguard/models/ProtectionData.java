@@ -19,12 +19,18 @@ public class ProtectionData {
     private final String protectionBlockTypeId;
     private final int chunkRange;
     private final List<String> protectedChunkKeys;
+    /** 保護の有効期限（Unixミリ秒）。0の場合は期限なし。 */
+    private long expiryTime;
 
     public ProtectionData(UUID owner, Location protectionBlockLocation) {
         this(owner, protectionBlockLocation, "default", 1);
     }
     
     public ProtectionData(UUID owner, Location protectionBlockLocation, String protectionBlockTypeId, int chunkRange) {
+        this(owner, protectionBlockLocation, protectionBlockTypeId, chunkRange, 0L);
+    }
+
+    public ProtectionData(UUID owner, Location protectionBlockLocation, String protectionBlockTypeId, int chunkRange, long expiryTime) {
         this.owner = owner;
         this.protectionBlockLocation = protectionBlockLocation;
         this.chunkX = protectionBlockLocation.getChunk().getX();
@@ -34,6 +40,7 @@ public class ProtectionData {
         this.protectionBlockTypeId = protectionBlockTypeId;
         this.chunkRange = chunkRange;
         this.protectedChunkKeys = generateProtectedChunkKeys();
+        this.expiryTime = expiryTime;
     }
 
     public ProtectionData(UUID owner, Location protectionBlockLocation, Set<UUID> trustedPlayers) {
@@ -43,6 +50,11 @@ public class ProtectionData {
     
     public ProtectionData(UUID owner, Location protectionBlockLocation, String protectionBlockTypeId, int chunkRange, Set<UUID> trustedPlayers) {
         this(owner, protectionBlockLocation, protectionBlockTypeId, chunkRange);
+        this.trustedPlayers.addAll(trustedPlayers);
+    }
+
+    public ProtectionData(UUID owner, Location protectionBlockLocation, String protectionBlockTypeId, int chunkRange, Set<UUID> trustedPlayers, long expiryTime) {
+        this(owner, protectionBlockLocation, protectionBlockTypeId, chunkRange, expiryTime);
         this.trustedPlayers.addAll(trustedPlayers);
     }
 
@@ -98,6 +110,46 @@ public class ProtectionData {
     
     public int getChunkRange() {
         return chunkRange;
+    }
+
+    /**
+     * 有効期限（Unixミリ秒）を取得。0は期限なし。
+     */
+    public long getExpiryTime() {
+        return expiryTime;
+    }
+
+    /**
+     * 有効期限を設定する
+     */
+    public void setExpiryTime(long expiryTime) {
+        this.expiryTime = expiryTime;
+    }
+
+    /**
+     * 保護が期限切れかどうかチェック
+     */
+    public boolean isExpired() {
+        if (expiryTime == 0) return false; // 期限なし
+        return System.currentTimeMillis() > expiryTime;
+    }
+
+    /**
+     * 残り時間（秒）を取得。期限なしの場合は -1。
+     */
+    public long getRemainingSeconds() {
+        if (expiryTime == 0) return -1;
+        long remaining = (expiryTime - System.currentTimeMillis()) / 1000;
+        return Math.max(0, remaining);
+    }
+
+    /**
+     * 指定秒数だけ有効期限を延長する
+     */
+    public void extendExpiry(long additionalSeconds) {
+        long now = System.currentTimeMillis();
+        long base = (expiryTime > now) ? expiryTime : now;
+        this.expiryTime = base + additionalSeconds * 1000L;
     }
     
     /**

@@ -13,9 +13,9 @@ import java.util.Map;
 
 public class ItemUtils {
     private static final NamespacedKey PROTECTION_BLOCK_KEY =
-            new NamespacedKey(OneChunkGuard.getInstance(), "protection_block");
+            NamespacedKey.fromString("onechunkguard:protection_block");
     private static final NamespacedKey PROTECTION_BLOCK_TYPE_KEY =
-            new NamespacedKey(OneChunkGuard.getInstance(), "protection_block_type");
+            NamespacedKey.fromString("onechunkguard:protection_block_type");
 
     /**
      * デフォルトの保護ブロックを作成

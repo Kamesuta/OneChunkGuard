@@ -9,6 +9,7 @@ import com.kamesuta.onechunkguard.listeners.*;
 import com.kamesuta.onechunkguard.managers.ConfigManager;
 import com.kamesuta.onechunkguard.managers.DataManager;
 import com.kamesuta.onechunkguard.managers.ProtectionManager;
+import com.kamesuta.onechunkguard.managers.TimeLimitManager;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bstats.bukkit.Metrics;
@@ -21,10 +22,15 @@ public class OneChunkGuard extends JavaPlugin {
     private ConfigManager configManager;
     private ProtectionManager protectionManager;
     private DataManager dataManager;
+    private TimeLimitManager timeLimitManager;
     private RegionContainer regionContainer;
 
     public static OneChunkGuard getInstance() {
         return instance;
+    }
+
+    public static void setInstance(OneChunkGuard mockPlugin) {
+        instance = mockPlugin;
     }
 
     @Override
@@ -41,6 +47,8 @@ public class OneChunkGuard extends JavaPlugin {
         // マネージャーの初期化
         this.dataManager = new DataManager(this);
         this.protectionManager = new ProtectionManager(this);
+        this.timeLimitManager = new TimeLimitManager(this);
+        this.timeLimitManager.start();
 
         // イベントの登録（目的別にまとめたリスナー）
         // 初回ログイン時配布リスナー
@@ -63,6 +71,9 @@ public class OneChunkGuard extends JavaPlugin {
 
         // 保護ブロックの物理的な移動（ピストンなど）を防ぐリスナー
         getServer().getPluginManager().registerEvents(new ProtectionBlockPhysicsListener(this), this);
+
+        // 補充アイテムの自動消費リスナー
+        getServer().getPluginManager().registerEvents(new RefillItemListener(this), this);
 
         // コマンドの登録
         UnprotectCommand unprotectCommand = new UnprotectCommand(this);
@@ -91,6 +102,9 @@ public class OneChunkGuard extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (timeLimitManager != null) {
+            timeLimitManager.stop();
+        }
         if (dataManager != null) {
             dataManager.saveAll();
         }
@@ -111,5 +125,9 @@ public class OneChunkGuard extends JavaPlugin {
 
     public RegionContainer getRegionContainer() {
         return regionContainer;
+    }
+
+    public TimeLimitManager getTimeLimitManager() {
+        return timeLimitManager;
     }
 }

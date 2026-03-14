@@ -19,6 +19,16 @@ protection-blocks:
     flags:            # WorldGuardフラグの設定（任意）
       creeper-explosion: deny
       tnt: deny
+    # 時間制限設定
+    time-limit:
+      # 初期保護時間（秒）。0の場合は時間制限なし
+      initial-duration-seconds: 1800  # 30分
+      # コスト係数：補充n回目のコストは係数^n個のアイテム
+      # こまめに補充するほど安くなる
+      cost-multiplier: 2.0
+      # 補充アイテム: マテリアル名 -> 1個消費で追加される秒数
+      refill-items:
+        GOLD_INGOT: 900   # 金インゴット1個 = +15分
   
   # VIPプレイヤー用の保護ブロック（例）
   vip:
@@ -37,6 +47,13 @@ protection-blocks:
     flags:            # WorldGuardフラグの設定（任意）
       creeper-explosion: deny
       tnt: deny
+    # 時間制限設定
+    time-limit:
+      initial-duration-seconds: 3600  # VIPは60分
+      cost-multiplier: 1.5            # 係数小さめ＝コスト増加がゆるやか
+      refill-items:
+        GOLD_INGOT: 900               # 金インゴット1個 = +15分
+        DIAMOND: 3600                 # ダイヤモンド1個 = +60分
 
 # 保護設定
 protection:

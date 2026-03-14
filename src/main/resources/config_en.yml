@@ -19,6 +19,16 @@ protection-blocks:
     flags:            # WorldGuard flag settings (optional)
       creeper-explosion: deny
       tnt: deny
+    # Time limit settings
+    time-limit:
+      # Initial protection time in seconds (0 = no time limit)
+      initial-duration-seconds: 1800  # 30 minutes
+      # Cost multiplier: each refill costs costMultiplier^n items (n = number of refills)
+      # Refilling frequently is cheaper than letting it run low
+      cost-multiplier: 2.0
+      # Refill items: material -> seconds added per item consumed
+      refill-items:
+        GOLD_INGOT: 900   # 1 gold ingot = +15 minutes
   
   # VIP player protection block (example)
   vip:
@@ -37,6 +47,13 @@ protection-blocks:
     flags:            # WorldGuard flag settings (optional)
       creeper-explosion: deny
       tnt: deny
+    # Time limit settings
+    time-limit:
+      initial-duration-seconds: 3600  # 60 minutes for VIP
+      cost-multiplier: 1.5            # Lower multiplier = more lenient cost increase
+      refill-items:
+        GOLD_INGOT: 900               # 1 gold ingot = +15 minutes
+        DIAMOND: 3600                 # 1 diamond = +60 minutes
 
 # Protection Settings
 protection:

@@ -63,6 +63,15 @@ online-status: "&aOnline"
 offline-status: "&7Offline"
 unknown-player: "Unknown Player"
 
+# Time Limit
+timelimit-actionbar-owner: "&eYour protection: &a{time} &eremaining"
+timelimit-actionbar-visitor: "&7{owner}'s protection: &a{time} &7remaining"
+timelimit-refill-success: "&aProtection extended by &e{time}&a! Remaining: &e{remaining}&a. Next refill cost: &e{next_cost} items&a."
+timelimit-expired: "&cYour chunk protection has expired due to time limit!"
+timelimit-unit-hour: "h"
+timelimit-unit-minute: "m"
+timelimit-unit-second: "s"
+
 # Chat UI
 chat-ui:
   header: "&6━━━━━ Chunk Protection ━━━━━"

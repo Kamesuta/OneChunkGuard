@@ -103,6 +103,10 @@ public class ProtectionManager {
         ProtectionData protection = new ProtectionData(playerId, blockLocation, typeId, blockType.getChunkRange());
         dataManager.addProtection(protection);
 
+        // 時間制限の初期設定
+        plugin.getTimeLimitManager().initializeExpiry(protection);
+        dataManager.saveData(); // expiryTime保存
+
         // プレイヤーヘッドを設置
         placePlayerHead(blockLocation, player);
 
@@ -174,6 +178,9 @@ public class ProtectionManager {
 
         // データから削除（種類指定）
         dataManager.removeProtection(playerId, blockTypeId);
+
+        // TimeLimitManagerに削除を通知（補充カウントリセット）
+        plugin.getTimeLimitManager().onProtectionRemoved(playerId, blockTypeId);
 
         // プレイヤーに保護ブロックを返却
         if (returnBlock) {
@@ -251,6 +258,9 @@ public class ProtectionManager {
 
         // データから削除
         dataManager.removeProtection(playerId);
+
+        // TimeLimitManagerに削除を通知
+        plugin.getTimeLimitManager().onProtectionRemoved(playerId, protection.getProtectionBlockTypeId());
 
         // プレイヤーに保護ブロックを返却
         if (returnBlock) {
@@ -581,6 +591,10 @@ public class ProtectionManager {
 
         // データから削除（返却なし）
         dataManager.removeProtection(ownerId, blockTypeId);
+
+        // TimeLimitManagerに削除を通知
+        plugin.getTimeLimitManager().onProtectionRemoved(ownerId, blockTypeId);
+
         return true;
     }
 }

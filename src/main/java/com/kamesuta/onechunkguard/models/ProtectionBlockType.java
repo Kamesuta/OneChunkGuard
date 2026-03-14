@@ -17,9 +17,16 @@ public class ProtectionBlockType {
     private final int chunkRange;
     private final String areaName;
     private final Map<String, String> flags;
+    /** 初期保護時間（秒）【0の場合は時間制限なし */
+    private final long initialDurationSeconds;
+    /** 補充コスト係数（次の補充は前の補充の係数倍のコスト） */
+    private final double costMultiplier;
+    /** 補充アイテム（Material -&gt; 追加秒数） */
+    private final Map<Material, Long> refillItems;
 
     public ProtectionBlockType(String id, Material material, String displayName, 
-                              List<String> lore, String parentRegion, int chunkRange, String areaName, Map<String, String> flags) {
+                              List<String> lore, String parentRegion, int chunkRange, String areaName, Map<String, String> flags,
+                              long initialDurationSeconds, double costMultiplier, Map<Material, Long> refillItems) {
         this.id = id;
         this.material = material;
         this.displayName = displayName;
@@ -28,6 +35,9 @@ public class ProtectionBlockType {
         this.chunkRange = chunkRange;
         this.areaName = areaName;
         this.flags = flags;
+        this.initialDurationSeconds = initialDurationSeconds;
+        this.costMultiplier = costMultiplier;
+        this.refillItems = refillItems;
     }
 
     public String getId() {
@@ -74,5 +84,33 @@ public class ProtectionBlockType {
 
     public Map<String, String> getFlags() {
         return flags;
+    }
+
+    /**
+     * 初期保護時間（秒）を取得【0の場合は時間制限なし
+     */
+    public long getInitialDurationSeconds() {
+        return initialDurationSeconds;
+    }
+
+    /**
+     * 時間制限機能が有効かチェック
+     */
+    public boolean hasTimeLimit() {
+        return initialDurationSeconds > 0;
+    }
+
+    /**
+     * 補充コスト係数を取得
+     */
+    public double getCostMultiplier() {
+        return costMultiplier;
+    }
+
+    /**
+     * 補充アイテムマップ（Material -&gt; 追加秒数）を取得
+     */
+    public Map<Material, Long> getRefillItems() {
+        return refillItems;
     }
 }

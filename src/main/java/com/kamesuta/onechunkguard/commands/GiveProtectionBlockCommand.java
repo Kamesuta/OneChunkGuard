@@ -102,10 +102,11 @@ public class GiveProtectionBlockCommand implements CommandExecutor, TabCompleter
             ItemStack protectionBlock = ItemUtils.createProtectionBlock(blockTypeId);
             
             // インベントリに空きがない場合はドロップ
-            if (targetPlayer.getInventory().firstEmpty() == -1) {
-                targetPlayer.getWorld().dropItemNaturally(targetPlayer.getLocation(), protectionBlock);
-            } else {
-                targetPlayer.getInventory().addItem(protectionBlock);
+            Map<Integer, ItemStack> leftover = targetPlayer.getInventory().addItem(protectionBlock);
+            if (!leftover.isEmpty()) {
+                for (ItemStack remaining : leftover.values()) {
+                    targetPlayer.getWorld().dropItemNaturally(targetPlayer.getLocation(), remaining);
+                }
             }
         }
 

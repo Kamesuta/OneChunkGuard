@@ -81,8 +81,9 @@ public class DataManager {
                         // 保護ブロック種類を取得（デフォルトは "default"）
                         String blockTypeId = protection.getString("block-type", "default");
                         int chunkRange = protection.getInt("chunk-range", 1);
+                        long expiryTime = protection.getLong("expiry-time", 0L);
                         
-                        ProtectionData data = new ProtectionData(owner, loc, blockTypeId, chunkRange, trusted);
+                        ProtectionData data = new ProtectionData(owner, loc, blockTypeId, chunkRange, trusted, expiryTime);
                         playerProtections.put(owner, data);
                         playerTypeProtections.put(owner.toString() + ":" + blockTypeId, data);
                         
@@ -122,6 +123,7 @@ public class DataManager {
             // 新しい情報も保存
             protection.set("block-type", data.getProtectionBlockTypeId());
             protection.set("chunk-range", data.getChunkRange());
+            protection.set("expiry-time", data.getExpiryTime());
 
             if (!data.getTrustedPlayers().isEmpty()) {
                 protection.set("trusted", data.getTrustedPlayers().stream()
@@ -170,7 +172,9 @@ public class DataManager {
         UUID playerId = data.getOwner();
         String blockTypeId = data.getProtectionBlockTypeId();
         
-        playerProtections.put(playerId, data);
+        if ("default".equals(blockTypeId) || !playerProtections.containsKey(playerId)) {
+            playerProtections.put(playerId, data);
+        }
         playerTypeProtections.put(playerId.toString() + ":" + blockTypeId, data);
         
         // 保護範囲内のすべてのチャンクキーを登録
@@ -232,5 +236,12 @@ public class DataManager {
 
     public boolean isChunkProtected(String chunkKey) {
         return chunkProtections.containsKey(chunkKey);
+    }
+
+    /**
+     * すべての保護データを取得（重複除外済み）
+     */
+    public java.util.Collection<ProtectionData> getAllProtections() {
+        return playerTypeProtections.values();
     }
 }

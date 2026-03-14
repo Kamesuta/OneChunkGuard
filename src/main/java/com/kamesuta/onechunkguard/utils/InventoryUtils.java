@@ -85,10 +85,11 @@ public class InventoryUtils {
         } else {
             // defaultブロック以外は通常のインベントリに配布
             // インベントリに空きがない場合はドロップ
-            if (player.getInventory().firstEmpty() == -1) {
-                player.getWorld().dropItemNaturally(player.getLocation(), protectionBlock);
-            } else {
-                player.getInventory().addItem(protectionBlock);
+            java.util.Map<Integer, ItemStack> leftover = player.getInventory().addItem(protectionBlock);
+            if (!leftover.isEmpty()) {
+                for (ItemStack remaining : leftover.values()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), remaining);
+                }
             }
         }
     }
