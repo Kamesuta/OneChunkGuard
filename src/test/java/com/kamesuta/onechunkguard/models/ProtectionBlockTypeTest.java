@@ -25,7 +25,7 @@ class ProtectionBlockTypeTest {
         flags.put("mob-spawning", "deny");
 
         ProtectionBlockType type = new ProtectionBlockType(id, material, displayName, lore, 
-                                                          parentRegion, chunkRange, areaName, flags, 0L, 2.0, new HashMap<>());
+                                                          parentRegion, chunkRange, areaName, flags, 0L, new java.util.TreeMap<>(), new HashMap<>());
 
         assertEquals(id, type.getId());
         assertEquals(material, type.getMaterial());
@@ -42,28 +42,28 @@ class ProtectionBlockTypeTest {
         // 親リージョン制限あり
         ProtectionBlockType typeWithRestriction = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "VIP", List.of(), 
-            "vip_area", 3, "VIPエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "vip_area", 3, "VIPエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertTrue(typeWithRestriction.hasParentRegionRestriction());
 
         // 親リージョン制限なし（空文字）
         ProtectionBlockType typeWithoutRestriction1 = new ProtectionBlockType(
             "default", Material.END_STONE, "Default", List.of(), 
-            "", 1, "デフォルトエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "デフォルトエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertFalse(typeWithoutRestriction1.hasParentRegionRestriction());
 
         // 親リージョン制限なし（null）
         ProtectionBlockType typeWithoutRestriction2 = new ProtectionBlockType(
             "default", Material.END_STONE, "Default", List.of(), 
-            null, 1, "デフォルトエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            null, 1, "デフォルトエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertFalse(typeWithoutRestriction2.hasParentRegionRestriction());
 
         // 親リージョン制限なし（空白のみ）
         ProtectionBlockType typeWithoutRestriction3 = new ProtectionBlockType(
             "default", Material.END_STONE, "Default", List.of(), 
-            "   ", 1, "デフォルトエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "   ", 1, "デフォルトエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertFalse(typeWithoutRestriction3.hasParentRegionRestriction());
     }
@@ -73,21 +73,21 @@ class ProtectionBlockTypeTest {
         // シングルチャンク
         ProtectionBlockType singleChunk = new ProtectionBlockType(
             "default", Material.END_STONE, "Default", List.of(), 
-            "", 1, "デフォルトエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "デフォルトエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertFalse(singleChunk.isMultiChunk());
 
         // マルチチャンク
         ProtectionBlockType multiChunk = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "VIP", List.of(), 
-            "vip_area", 3, "VIPエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "vip_area", 3, "VIPエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertTrue(multiChunk.isMultiChunk());
 
         // 5x5チャンク
         ProtectionBlockType largeChunk = new ProtectionBlockType(
             "premium", Material.EMERALD_BLOCK, "Premium", List.of(), 
-            "premium_area", 5, "プレミアムエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "premium_area", 5, "プレミアムエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         assertTrue(largeChunk.isMultiChunk());
     }
@@ -97,7 +97,7 @@ class ProtectionBlockTypeTest {
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&l保護ブロック", 
             List.of("1x1チャンクを保護", "基本的な保護ブロック"), 
-            "", 1, "デフォルトエリア", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "デフォルトエリア", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
 
         assertEquals("default", defaultType.getId());
@@ -118,7 +118,7 @@ class ProtectionBlockTypeTest {
         ProtectionBlockType vipType = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "&b&lVIP保護ブロック", 
             List.of("3x3チャンクを保護", "VIP専用エリア"), 
-            "vip_area", 3, "VIPエリア", vipFlags, 0L, 2.0, new HashMap<>()
+            "vip_area", 3, "VIPエリア", vipFlags, 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
 
         assertEquals("vip", vipType.getId());
@@ -136,7 +136,7 @@ class ProtectionBlockTypeTest {
     void testEmptyLoreAndFlags() {
         ProtectionBlockType type = new ProtectionBlockType(
             "test", Material.STONE, "Test", List.of(), 
-            "", 1, "Test Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "Test Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
 
         assertTrue(type.getLore().isEmpty());
@@ -147,7 +147,7 @@ class ProtectionBlockTypeTest {
     void testLargeChunkRange() {
         ProtectionBlockType largeType = new ProtectionBlockType(
             "mega", Material.NETHERITE_BLOCK, "Mega", List.of(), 
-            "mega_area", 7, "Mega Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "mega_area", 7, "Mega Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
 
         assertEquals(7, largeType.getChunkRange());

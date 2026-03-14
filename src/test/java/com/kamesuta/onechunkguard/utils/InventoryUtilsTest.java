@@ -56,13 +56,13 @@ class InventoryUtilsTest {
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
             List.of("&7Place this block to", "&7protect a chunk"),
-            "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         
         ProtectionBlockType vipType = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "&b&lVIP Protection Block",
             List.of("&7VIP only", "&73x3 chunk protection"),
-            "vip_area", 3, "VIP Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "vip_area", 3, "VIP Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         
         when(mockConfigManager.getDefaultProtectionBlockType()).thenReturn(defaultType);

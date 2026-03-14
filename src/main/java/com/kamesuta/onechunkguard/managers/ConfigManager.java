@@ -16,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class ConfigManager {
@@ -104,7 +106,20 @@ public class ConfigManager {
 
             // 時間制限関連設定を読み込み
             long initialDurationSeconds = typeSection.getLong("time-limit.initial-duration-seconds", 0L);
-            double costMultiplier = typeSection.getDouble("time-limit.cost-multiplier", 2.0);
+            
+            NavigableMap<Long, Integer> costSteps = new TreeMap<>();
+            ConfigurationSection costSection = typeSection.getConfigurationSection("time-limit.cost-steps");
+            if (costSection != null) {
+                for (String timeStr : costSection.getKeys(false)) {
+                    long seconds = parseTimeToSeconds(timeStr);
+                    if (seconds >= 0) {
+                        costSteps.put(seconds, costSection.getInt(timeStr, 1));
+                    }
+                }
+            }
+            if (costSteps.isEmpty()) {
+                costSteps.put(0L, 1);
+            }
 
             // 補充アイテムを読み込み
             Map<Material, Long> refillItems = new HashMap<>();
@@ -124,7 +139,7 @@ public class ConfigManager {
             }
             
             ProtectionBlockType type = new ProtectionBlockType(typeId, material, displayName, lore, parentRegion, chunkRange, areaName, flags,
-                    initialDurationSeconds, costMultiplier, refillItems);
+                    initialDurationSeconds, costSteps, refillItems);
             protectionBlockTypes.put(typeId, type);
         }
         
@@ -135,6 +150,30 @@ public class ConfigManager {
         }
     }
     
+    /**
+     * 時間文字列("1d", "2h", "30m", "45s")を秒数にパースする
+     */
+    private long parseTimeToSeconds(String timeStr) {
+        if (timeStr == null || timeStr.isEmpty()) return -1;
+        timeStr = timeStr.toLowerCase().trim();
+        try {
+            if (timeStr.endsWith("d")) {
+                return Long.parseLong(timeStr.replace("d", "")) * 86400;
+            } else if (timeStr.endsWith("h")) {
+                return Long.parseLong(timeStr.replace("h", "")) * 3600;
+            } else if (timeStr.endsWith("m")) {
+                return Long.parseLong(timeStr.replace("m", "")) * 60;
+            } else if (timeStr.endsWith("s")) {
+                return Long.parseLong(timeStr.replace("s", ""));
+            } else {
+                return Long.parseLong(timeStr);
+            }
+        } catch (NumberFormatException e) {
+            plugin.getLogger().warning("Invalid time format in config: " + timeStr);
+            return -1;
+        }
+    }
+
     /**
      * すべての保護ブロックタイプを取得
      */

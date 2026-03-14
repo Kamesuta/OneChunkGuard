@@ -26,8 +26,6 @@ public class TimeLimitManager {
     private final OneChunkGuard plugin;
     /** ホログラム更新・期限切れチェック用タスク */
     private BukkitTask tickTask;
-    /** 各保護の補充カウント（コスト計算用）: "playerUUID:typeId" -> 補充済み回数 */
-    private final Map<String, Integer> refillCounts = new HashMap<>();
     /** アクティブな保護のホログラム（TextDisplay）キャッシュ */
     private final Map<String, TextDisplay> holograms = new HashMap<>();
 
@@ -133,44 +131,43 @@ public class TimeLimitManager {
         }
 
         Map<Material, Long> refillItems = type.getRefillItems();
-        String key = data.getOwner().toString() + ":" + data.getProtectionBlockTypeId();
-        int currentCount = refillCounts.getOrDefault(key, 0);
+        NavigableMap<Long, Integer> costSteps = type.getCostSteps();
 
-        // コスト係数を計算
-        // 補充回数が増えるほどコストが増加: 必要アイテム数 = ceil(multiplier^count)
-        double multiplier = type.getCostMultiplier();
-        int itemsNeeded = (int) Math.ceil(Math.pow(multiplier, currentCount));
-
-        // プレイヤーのインベントリから補充アイテムを探す
         long addedSeconds = 0L;
+        long currentRemaining = Math.max(0, data.getRemainingSeconds());
 
         for (Map.Entry<Material, Long> refillEntry : refillItems.entrySet()) {
             Material mat = refillEntry.getKey();
             long secondsPerItem = refillEntry.getValue();
 
-            // インベントリ内の数量を取得
             int available = countItems(player, mat);
             if (available <= 0) continue;
 
-            // 消費できる個数（必要個数を上限として）
-            int toConsume = Math.min(available, itemsNeeded);
-            removeItems(player, mat, toConsume);
+            while (available > 0) {
+                // 現在の残り時間に基づいて必要コストを計算（指定キー以下の最大キーを採用。未定義の負数などは1）
+                Map.Entry<Long, Integer> stepEntry = costSteps.floorEntry(currentRemaining);
+                int itemsNeeded = (stepEntry != null) ? stepEntry.getValue() : 1;
 
-            // 延長秒数を計算（消費数 / 必要数 の割合で延長）
-            addedSeconds += (long) secondsPerItem * toConsume / itemsNeeded;
-            itemsNeeded -= toConsume;
+                int toConsume = Math.min(available, itemsNeeded);
+                removeItems(player, mat, toConsume);
 
-            if (itemsNeeded <= 0) break;
+                long grantedSeconds = (long) ((double) secondsPerItem * toConsume / itemsNeeded);
+                addedSeconds += grantedSeconds;
+                currentRemaining += grantedSeconds;
+                available -= toConsume;
+
+                if (toConsume < itemsNeeded) {
+                    break;
+                }
+            }
         }
 
         if (addedSeconds > 0) {
             data.extendExpiry(addedSeconds);
-            refillCounts.put(key, currentCount + 1);
             plugin.getDataManager().saveData();
 
-            // 補充成功メッセージ
-            int nextCount = currentCount + 1;
-            int nextCost = (int) Math.ceil(Math.pow(multiplier, nextCount));
+            Map.Entry<Long, Integer> nextStepEntry = costSteps.floorEntry(data.getRemainingSeconds());
+            int nextCost = (nextStepEntry != null) ? nextStepEntry.getValue() : 1;
             player.sendMessage(plugin.getConfigManager().getMessage(
                     "timelimit-refill-success",
                     "{time}", formatTime(addedSeconds),
@@ -190,10 +187,6 @@ public class TimeLimitManager {
 
         long expiryTime = System.currentTimeMillis() + type.getInitialDurationSeconds() * 1000L;
         data.setExpiryTime(expiryTime);
-
-        // 補充カウントをリセット
-        String key = data.getOwner().toString() + ":" + data.getProtectionBlockTypeId();
-        refillCounts.put(key, 0);
     }
 
     /**
@@ -226,11 +219,10 @@ public class TimeLimitManager {
     }
 
     /**
-     * 保護を削除した際にカウントとホログラムをリセット
+     * 保護を削除した際にホログラムをリセット
      */
     public void onProtectionRemoved(UUID ownerId, String blockTypeId) {
         String key = ownerId.toString() + ":" + blockTypeId;
-        refillCounts.remove(key);
 
         TextDisplay display = holograms.remove(key);
         if (display != null && display.isValid()) {

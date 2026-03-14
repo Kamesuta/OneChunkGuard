@@ -59,7 +59,7 @@ class ItemUtilsTest {
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
             List.of("&7Place this block to", "&7protect a chunk"),
-            "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         
         when(mockConfigManager.getDefaultProtectionBlockType()).thenReturn(defaultType);
@@ -85,7 +85,7 @@ class ItemUtilsTest {
         ProtectionBlockType vipType = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "&b&lVIP Protection Block",
             List.of("&7VIP only", "&73x3 chunk protection"),
-            "vip_area", 3, "VIP Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "vip_area", 3, "VIP Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         
         when(mockConfigManager.getProtectionBlockType("vip")).thenReturn(vipType);
@@ -113,7 +113,7 @@ class ItemUtilsTest {
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
             List.of("&7Place this block to", "&7protect a chunk"),
-            "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getDefaultProtectionBlockType()).thenReturn(defaultType);
         when(mockConfigManager.getProtectionBlockType("default")).thenReturn(defaultType);
@@ -172,7 +172,7 @@ class ItemUtilsTest {
         // Test with VIP protection block
         ProtectionBlockType vipType = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "&b&lVIP Protection Block",
-            List.of(), "", 3, "VIP Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 3, "VIP Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getProtectionBlockType("vip")).thenReturn(vipType);
         
@@ -192,7 +192,7 @@ class ItemUtilsTest {
         // Setup mock protection block type
         ProtectionBlockType vipType = new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "&b&lVIP Protection Block",
-            List.of(), "", 3, "VIP Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 3, "VIP Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getProtectionBlockType("vip")).thenReturn(vipType);
         
@@ -217,11 +217,11 @@ class ItemUtilsTest {
         Map<String, ProtectionBlockType> types = new HashMap<>();
         types.put("default", new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
-            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         ));
         types.put("vip", new ProtectionBlockType(
             "vip", Material.DIAMOND_BLOCK, "&b&lVIP Protection Block",
-            List.of(), "", 3, "VIP Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 3, "VIP Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         ));
         
         when(mockConfigManager.getProtectionBlockTypes()).thenReturn(types);
@@ -265,7 +265,7 @@ class ItemUtilsTest {
         
         ProtectionBlockType typeWithFlags = new ProtectionBlockType(
             "premium", Material.EMERALD_BLOCK, "&a&lPremium Protection Block",
-            List.of("&7Premium features"), "", 5, "Premium Area", flags, 0L, 2.0, new HashMap<>()
+            List.of("&7Premium features"), "", 5, "Premium Area", flags, 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         
         when(mockConfigManager.getProtectionBlockType("premium")).thenReturn(typeWithFlags);

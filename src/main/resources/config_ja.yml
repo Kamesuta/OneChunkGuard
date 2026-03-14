@@ -23,9 +23,12 @@ protection-blocks:
     time-limit:
       # 初期保護時間（秒）。0の場合は時間制限なし
       initial-duration-seconds: 1800  # 30分
-      # コスト係数：補充n回目のコストは係数^n個のアイテム
-      # こまめに補充するほど安くなる
-      cost-multiplier: 2.0
+      # 残り時間による必要アイテム数（コスト）
+      # 残り時間が指定された以上のときに、必要アイテム数が変化します
+      # 定義されていない範囲（0s以上）は1個になります
+      cost-steps:
+        "1d": 5   # 残り1日以上の場合は1回の補充に5個必要
+        "2h": 2   # 残り2時間以上の場合は1回の補充に2個必要
       # 補充アイテム: マテリアル名 -> 1個消費で追加される秒数
       refill-items:
         GOLD_INGOT: 900   # 金インゴット1個 = +15分
@@ -50,7 +53,9 @@ protection-blocks:
     # 時間制限設定
     time-limit:
       initial-duration-seconds: 3600  # VIPは60分
-      cost-multiplier: 1.5            # 係数小さめ＝コスト増加がゆるやか
+      cost-steps:
+        "1d": 3
+        "2h": 2
       refill-items:
         GOLD_INGOT: 900               # 金インゴット1個 = +15分
         DIAMOND: 3600                 # ダイヤモンド1個 = +60分

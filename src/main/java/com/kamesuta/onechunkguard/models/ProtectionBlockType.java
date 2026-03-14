@@ -4,6 +4,7 @@ import org.bukkit.Material;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 
 /**
  * 保護ブロックの種類を表すモデルクラス
@@ -17,16 +18,16 @@ public class ProtectionBlockType {
     private final int chunkRange;
     private final String areaName;
     private final Map<String, String> flags;
-    /** 初期保護時間（秒）【0の場合は時間制限なし */
+    /** 初期保護時間（秒）【0の場合は時間制限なし】 */
     private final long initialDurationSeconds;
-    /** 補充コスト係数（次の補充は前の補充の係数倍のコスト） */
-    private final double costMultiplier;
+    /** 残り時間（秒）をキーとする必要コスト（個数）のマップ。0秒以上のデフォルトは1個 */
+    private final NavigableMap<Long, Integer> costSteps;
     /** 補充アイテム（Material -&gt; 追加秒数） */
     private final Map<Material, Long> refillItems;
 
     public ProtectionBlockType(String id, Material material, String displayName, 
                               List<String> lore, String parentRegion, int chunkRange, String areaName, Map<String, String> flags,
-                              long initialDurationSeconds, double costMultiplier, Map<Material, Long> refillItems) {
+                              long initialDurationSeconds, NavigableMap<Long, Integer> costSteps, Map<Material, Long> refillItems) {
         this.id = id;
         this.material = material;
         this.displayName = displayName;
@@ -36,7 +37,7 @@ public class ProtectionBlockType {
         this.areaName = areaName;
         this.flags = flags;
         this.initialDurationSeconds = initialDurationSeconds;
-        this.costMultiplier = costMultiplier;
+        this.costSteps = costSteps;
         this.refillItems = refillItems;
     }
 
@@ -101,10 +102,10 @@ public class ProtectionBlockType {
     }
 
     /**
-     * 補充コスト係数を取得
+     * 段階的コスト定義を取得
      */
-    public double getCostMultiplier() {
-        return costMultiplier;
+    public NavigableMap<Long, Integer> getCostSteps() {
+        return costSteps;
     }
 
     /**

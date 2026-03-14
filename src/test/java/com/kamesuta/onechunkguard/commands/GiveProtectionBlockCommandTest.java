@@ -120,7 +120,7 @@ class GiveProtectionBlockCommandTest {
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
             List.of("&7Place this block to", "&7protect a chunk"),
-            "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getProtectionBlockType("default")).thenReturn(defaultType);
         
@@ -145,7 +145,7 @@ class GiveProtectionBlockCommandTest {
         // Setup mock protection block type
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
-            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getProtectionBlockType("default")).thenReturn(defaultType);
         
@@ -209,8 +209,8 @@ class GiveProtectionBlockCommandTest {
         when(mockConfigManager.getProtectionBlockType("invalid")).thenReturn(null);
         
         Map<String, ProtectionBlockType> types = new HashMap<>();
-        types.put("default", new ProtectionBlockType("default", Material.END_STONE, "Default", List.of(), "", 1, "Default", new HashMap<>(), 0L, 2.0, new HashMap<>()));
-        types.put("vip", new ProtectionBlockType("vip", Material.DIAMOND_BLOCK, "VIP", List.of(), "", 3, "VIP", new HashMap<>(), 0L, 2.0, new HashMap<>()));
+        types.put("default", new ProtectionBlockType("default", Material.END_STONE, "Default", List.of(), "", 1, "Default", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()));
+        types.put("vip", new ProtectionBlockType("vip", Material.DIAMOND_BLOCK, "VIP", List.of(), "", 3, "VIP", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()));
         when(mockConfigManager.getProtectionBlockTypes()).thenReturn(types);
         
         boolean result = command.onCommand(admin, cmd, "giveprotectionblock", new String[]{"TargetPlayer", "invalid"});
@@ -229,7 +229,7 @@ class GiveProtectionBlockCommandTest {
         // Setup mock protection block type
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
-            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getProtectionBlockType("default")).thenReturn(defaultType);
         
@@ -284,7 +284,7 @@ class GiveProtectionBlockCommandTest {
         // Setup mock protection block type
         ProtectionBlockType defaultType = new ProtectionBlockType(
             "default", Material.END_STONE, "&6&lProtection Block",
-            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, 2.0, new HashMap<>()
+            List.of(), "", 1, "Default Area", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()
         );
         when(mockConfigManager.getProtectionBlockType("default")).thenReturn(defaultType);
         
@@ -307,8 +307,8 @@ class GiveProtectionBlockCommandTest {
         
         // Test protection type completion
         Map<String, ProtectionBlockType> types = new HashMap<>();
-        types.put("default", new ProtectionBlockType("default", Material.END_STONE, "Default", List.of(), "", 1, "Default", new HashMap<>(), 0L, 2.0, new HashMap<>()));
-        types.put("vip", new ProtectionBlockType("vip", Material.DIAMOND_BLOCK, "VIP", List.of(), "", 3, "VIP", new HashMap<>(), 0L, 2.0, new HashMap<>()));
+        types.put("default", new ProtectionBlockType("default", Material.END_STONE, "Default", List.of(), "", 1, "Default", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()));
+        types.put("vip", new ProtectionBlockType("vip", Material.DIAMOND_BLOCK, "VIP", List.of(), "", 3, "VIP", new HashMap<>(), 0L, new java.util.TreeMap<>(), new HashMap<>()));
         when(mockConfigManager.getProtectionBlockTypes()).thenReturn(types);
         
         List<String> completions2 = command.onTabComplete(admin, cmd, "giveprotectionblock", new String[]{"TargetPlayer", "d"});

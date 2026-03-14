@@ -23,9 +23,12 @@ protection-blocks:
     time-limit:
       # Initial protection time in seconds (0 = no time limit)
       initial-duration-seconds: 1800  # 30 minutes
-      # Cost multiplier: each refill costs costMultiplier^n items (n = number of refills)
-      # Refilling frequently is cheaper than letting it run low
-      cost-multiplier: 2.0
+      # Step-based cost increase based on remaining time
+      # Cost increases when remaining time exceeds the specified duration
+      # Default cost for 0s+ is 1 item.
+      cost-steps:
+        "1d": 5   # Costs 5 items if remaining time is 1 day or more
+        "2h": 2   # Costs 2 items if remaining time is 2 hours or more
       # Refill items: material -> seconds added per item consumed
       refill-items:
         GOLD_INGOT: 900   # 1 gold ingot = +15 minutes
@@ -50,7 +53,9 @@ protection-blocks:
     # Time limit settings
     time-limit:
       initial-duration-seconds: 3600  # 60 minutes for VIP
-      cost-multiplier: 1.5            # Lower multiplier = more lenient cost increase
+      cost-steps:
+        "1d": 3                       # Cheaper cost for VIP
+        "2h": 2
       refill-items:
         GOLD_INGOT: 900               # 1 gold ingot = +15 minutes
         DIAMOND: 3600                 # 1 diamond = +60 minutes
